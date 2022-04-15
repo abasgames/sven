@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{a130910f-5832-45be-a284-74d522419ffb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers">
+      <UniqueIdentifier>{f8b4784c-80fa-4349-87ca-3ee72abcdfab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{cc257a3e-eeda-4f16-aa26-030f6f47f13e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\utils">
+      <UniqueIdentifier>{caa79c9b-42a0-4093-aae2-f9f0e2a29593}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\sdk">
+      <UniqueIdentifier>{e1eb2cb3-24cf-44f1-ab8c-1ecaa89f6141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\hooks">
+      <UniqueIdentifier>{d7f27ff1-e49b-42a4-86c7-7eea7f4205de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor">
+      <UniqueIdentifier>{f85bf86e-0682-4119-bf02-45e3dd80cd7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\imgui">
+      <UniqueIdentifier>{a24ce86d-e884-4ebd-87d6-a8279ed67143}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\interfaces">
+      <UniqueIdentifier>{19c533ff-acba-4f3b-8464-f45addba1119}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\hacks">
+      <UniqueIdentifier>{db4d8c9c-14c2-4b06-9f34-4c2ed931c764}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\minhook">
+      <UniqueIdentifier>{4c4ba5f6-790f-43a3-8261-288abed2fc5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\minhook\hde">
+      <UniqueIdentifier>{d891d4b0-d2bc-4d97-afac-d9a36e51b2c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\hacks\hooks">
+      <UniqueIdentifier>{d5f19618-40cd-4eab-a908-5bbf19c0e036}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\renderer">
+      <UniqueIdentifier>{9a5bbeda-af6c-4ff1-a276-653c3151ed3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\hooks\game">
+      <UniqueIdentifier>{8e06e428-dc2c-4a61-8c8c-0344472085c0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cc">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="core\utils\utils.cc">
+      <Filter>core\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="core\hooks\hooks.cc">
+      <Filter>core\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\imgui.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\imgui_demo.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\imgui_draw.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\imgui_impl_opengl3.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\imgui_impl_win32.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\imgui_tables.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\imgui_widgets.cpp">
+      <Filter>vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="core\interfaces\interfaces.cc">
+      <Filter>core\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\minhook\hde\hde32.c">
+      <Filter>vendor\minhook\hde</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\minhook\hde\hde64.c">
+      <Filter>vendor\minhook\hde</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\minhook\buffer.c">
+      <Filter>vendor\minhook</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\minhook\hook.c">
+      <Filter>vendor\minhook</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\minhook\trampoline.c">
+      <Filter>vendor\minhook</Filter>
+    </ClCompile>
+    <ClCompile Include="core\hacks\features.cc">
+      <Filter>core\hacks</Filter>
+    </ClCompile>
+    <ClCompile Include="core\renderer\menu.cc">
+      <Filter>core\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="core\renderer\renderer.cc">
+      <Filter>core\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="core\hooks\game\hud.cc">
+      <Filter>core\hooks\game</Filter>
+    </ClCompile>
+    <ClCompile Include="core\hooks\game\netchan.cc">
+      <Filter>core\hooks\game</Filter>
+    </ClCompile>
+    <ClCompile Include="core\hooks\game\swapbuffers.cc">
+      <Filter>core\hooks\game</Filter>
+    </ClCompile>
+    <ClCompile Include="core\hooks\game\cl.cc">
+      <Filter>core\hooks\game</Filter>
+    </ClCompile>
+    <ClCompile Include="core\hooks\game\votemenu.cc">
+      <Filter>core\hooks\game</Filter>
+    </ClCompile>
+    <ClCompile Include="core\hooks\game\scr.cc">
+      <Filter>core\hooks\game</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="core\utils\utils.hh">
+      <Filter>core\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_base_interface.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_cl_entity.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_client_dll.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_color32.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_engine_funcs.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_game_client_exports.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_game_console.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_player_move.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_run_game_engine.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_studio_model.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_triangle_api.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_usercmd.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_vector.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_vgui_panel.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_vgui_surface.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\sdk.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\hooks\hooks.hh">
+      <Filter>core\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imconfig.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imgui.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imgui_impl_opengl3.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imgui_impl_win32.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imgui_internal.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imstb_rectpack.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imstb_textedit.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui\imstb_truetype.h">
+      <Filter>vendor\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="core\interfaces\interfaces.hh">
+      <Filter>core\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\minhook\hde\hde32.h">
+      <Filter>vendor\minhook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\minhook\hde\hde64.h">
+      <Filter>vendor\minhook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\minhook\hde\pstdint.h">
+      <Filter>vendor\minhook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\minhook\hde\table32.h">
+      <Filter>vendor\minhook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\minhook\hde\table64.h">
+      <Filter>vendor\minhook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\minhook\buffer.h">
+      <Filter>vendor\minhook</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\minhook\minhook.h">
+      <Filter>vendor\minhook</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\minhook\trampoline.h">
+      <Filter>vendor\minhook</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_global_vars.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\hacks\features.hh">
+      <Filter>core\hacks</Filter>
+    </ClInclude>
+    <ClInclude Include="core\hacks\visuals.hh">
+      <Filter>core\hacks\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="core\hacks\createmove.hh">
+      <Filter>core\hacks\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_server_browser.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_net_channel.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\renderer\api.hh">
+      <Filter>core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="core\renderer\menu.hh">
+      <Filter>core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="core\hacks\studiomodelrenderer.hh">
+      <Filter>core\hacks\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="core\renderer\renderer.hh">
+      <Filter>core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="core\renderer\controls.hh">
+      <Filter>core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_custom.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_vote_popup.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_convar.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\utils\address.hh">
+      <Filter>core\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="core\utils\hooking.hh">
+      <Filter>core\utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
