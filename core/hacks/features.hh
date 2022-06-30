@@ -37,6 +37,7 @@ namespace options {
 		afk_sidemove,
 		afk_forwardmove,
 		afk_both,
+		afk_wasd,
 		afk_roaming,
 		afk_kill,
 		afk_gibme

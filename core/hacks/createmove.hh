@@ -564,6 +564,11 @@ namespace createmove {
 		if ( xtu::is_player_dead( ) )
 			return;
 
+		if ( cfg::get< int >( vars.antiafk_mode ) == options::antiafk_modes::afk_wasd ) {
+			if ( ( m_cmd->buttons & sdk::in_forward ) || ( m_cmd->buttons & sdk::in_back ) || ( m_cmd->buttons & sdk::in_move_left ) || ( m_cmd->buttons & sdk::in_move_right ) || ( m_cmd->buttons & sdk::in_jump ) || ( cfg::get< bool >( vars.autostrafe ) && Mui::is_key_down( cfg::get< int >( vars.autostrafe_key ) ) ) )
+				return;
+		};
+
 		if ( xtu::is_player_inwater( ) ) {
 			m_cmd->buttons |= sdk::in_jump;
 		};
@@ -591,6 +596,14 @@ namespace createmove {
 			const float sidemove_factor = cfg::get< float >( vars.antiafk_sidemove );
 			m_cmd->forwardmove = jitt ? forwardmove_factor : -forwardmove_factor;
 			m_cmd->sidemove = jitt ? sidemove_factor : -sidemove_factor;
+		}break;
+		case options::antiafk_modes::afk_wasd:
+		{
+			static bool jitt;
+			jitt = !jitt;
+			const float forwardmove_factor = 20.0f;
+			m_cmd->forwardmove = jitt ? forwardmove_factor : -forwardmove_factor;
+			m_cmd->sidemove = jitt ? forwardmove_factor : -forwardmove_factor;
 		}break;
 		case options::antiafk_modes::afk_roaming:
 		{

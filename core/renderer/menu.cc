@@ -28,7 +28,7 @@ enum MUI_TABS : int {
 
 const char* autostrafe_modes[ 2 ] = { "telehop", "velocity" };
 const char* speedhack_modes[ 5 ] = { "fast", "super fast", "slow", "super slow", "factor" };
-const char* antiafk_modes[ 6 ] = { "side", "forward", "both", "roaming", "kill", "gibme" };
+const char* antiafk_modes[ 7 ] = { "side", "forward", "both", "wasd", "roaming", "kill", "gibme" };
 const char* antiaim_yaw_modes[ 13 ] = { "none", "zero", "backwards", "sideways", "back jitter", "slowspin", "fastspin", "goldenspin", "random", "fake left", "fake right", "switch", "lisp" };
 const char* antiaim_pitch_modes[ 10 ] = { "none", "zero", "emotion", "up", "down", "up2", "fakedown", "fakeup", "varie", "lisp" };
 const char* fakelag_modes[ 2 ] = { "on key", "on velocity" };
