@@ -6,6 +6,10 @@
 #include "address.hh"
 
 namespace xtu {
+
+	extern float viewangles_x;
+	extern float viewangles_y;
+
 	std::uintptr_t find_pattern( const std::string_view& from, const std::string_view& pattern ) noexcept;
 
 	std::uintptr_t find_string( const std::string_view& from, const std::string_view& string ) noexcept;
@@ -34,6 +38,8 @@ namespace xtu {
 
 	void vector_angles( const sdk::c_vector& forward, sdk::c_vector& angles );
 
+	void angle_vectors( const sdk::c_vector& angles, sdk::c_vector* forward );
+
 	bool world_to_screen( sdk::c_vector in, sdk::c_vector& out );
 
 	extern bool send_packet;
@@ -44,11 +50,40 @@ namespace xtu {
 
 	double read_coord( );
 
+	unsigned short read_short( );
+
 	void usermsg( const char* message, void* func );
 
 	void* usermsg_org( const char* message );
 
 	void buffered_localise_text_string( const char* msg );
 
+	int insert_color_change( DWORD* ecx, int a2 );
+
+	int insert_text( void* ecx, const char* msg );
+
+	int color_print( DWORD* thisptr, const char* msg, sdk::c_color32 color );
+
+	void console_color_printf( sdk::c_color32 color, const char* msg, ... );
+
 	BYTE read_byte( );
+
+	char* util_get_map_name( );
+
+	const char* get_name_changed( int index );
+
+	const char* get_steam_name( );
+
+	// this is so fucking ugly, but this is the only solution i could find.
+// Basically, the animtime stops if the entity is dead or has frozen,
+// GetClientTime ticks at the same speed as animtime, but considering that clienttime is always ticking, we
+// can use this to make a dormancy check.
+	bool dormant( sdk::cl_entity_s* entity, sdk::cl_entity_s* local );
+
+	bool stopped_animation( sdk::cl_entity_s* entity );
+
+	bool is_player_dead( );
+	bool is_player_movetype( );
+	bool is_player_inwater( );
+	bool is_player_dead_non_observer( );
 };

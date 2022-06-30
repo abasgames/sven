@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClCompile Include="core\hacks\features.cc" />
     <ClCompile Include="core\hooks\game\cl.cc" />
+    <ClCompile Include="core\hooks\game\color.cc" />
     <ClCompile Include="core\hooks\game\hud.cc" />
     <ClCompile Include="core\hooks\game\netchan.cc" />
     <ClCompile Include="core\hooks\game\scr.cc" />
@@ -168,13 +169,14 @@
     <ClCompile Include="vendor\minhook\trampoline.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\hacks\config.hh" />
     <ClInclude Include="core\hacks\createmove.hh" />
     <ClInclude Include="core\hacks\features.hh" />
     <ClInclude Include="core\hacks\studiomodelrenderer.hh" />
+    <ClInclude Include="core\hacks\vars.hh" />
     <ClInclude Include="core\hacks\visuals.hh" />
     <ClInclude Include="core\hooks\hooks.hh" />
     <ClInclude Include="core\interfaces\interfaces.hh" />
-    <ClInclude Include="core\renderer\api.hh" />
     <ClInclude Include="core\renderer\controls.hh" />
     <ClInclude Include="core\renderer\menu.hh" />
     <ClInclude Include="core\renderer\renderer.hh" />
@@ -187,11 +189,13 @@
     <ClInclude Include="core\sdk\c_engine_funcs.hh" />
     <ClInclude Include="core\sdk\c_game_client_exports.hh" />
     <ClInclude Include="core\sdk\c_game_console.hh" />
+    <ClInclude Include="core\sdk\c_game_ui.hh" />
     <ClInclude Include="core\sdk\c_global_vars.hh" />
     <ClInclude Include="core\sdk\c_net_channel.hh" />
     <ClInclude Include="core\sdk\c_player_move.hh" />
     <ClInclude Include="core\sdk\c_run_game_engine.hh" />
     <ClInclude Include="core\sdk\c_server_browser.hh" />
+    <ClInclude Include="core\sdk\c_steam_api.hh" />
     <ClInclude Include="core\sdk\c_studio_model.hh" />
     <ClInclude Include="core\sdk\c_triangle_api.hh" />
     <ClInclude Include="core\sdk\c_usercmd.hh" />
@@ -201,6 +205,7 @@
     <ClInclude Include="core\sdk\c_vote_popup.hh" />
     <ClInclude Include="core\sdk\sdk.hh" />
     <ClInclude Include="core\utils\address.hh" />
+    <ClInclude Include="core\utils\hash.hh" />
     <ClInclude Include="core\utils\hooking.hh" />
     <ClInclude Include="core\utils\utils.hh" />
     <ClInclude Include="vendor\imgui\imconfig.h" />
@@ -220,6 +225,8 @@
     <ClInclude Include="vendor\minhook\hde\table64.h" />
     <ClInclude Include="vendor\minhook\minhook.h" />
     <ClInclude Include="vendor\minhook\trampoline.h" />
+    <ClInclude Include="vendor\tamashi\tamashi.hh" />
+    <ClInclude Include="xorstr.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,6 +21,7 @@ namespace sdk {
 		inline int g( ) const { return colors[ 1 ]; };
 		inline int b( ) const { return colors[ 2 ]; };
 		inline int a( ) const { return colors[ 3 ]; };
+		inline uint32_t hex_abgr( ) const { return ( ( colors[ 3 ] << 24 | colors[ 2 ] << 16 | colors[ 1 ] << 8 | colors[ 0 ] ) ); }; // sven coop specific.
 		inline std::uint8_t operator[]( int index ) { return colors[ index ]; };
 		inline std::uint8_t* get_scheme( ) { return colors; };
 		static c_color32 hsb_to_rgb( float hue, float saturation, float brightness ) {

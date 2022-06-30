@@ -7,23 +7,11 @@
 #include <interfaces/interfaces.hh>
 #include <minhook/minhook.h>
 
-xth::fn_studio_setup_bones org_studio_setup_bones = nullptr;
-
-//void studio_setup_bones_process_bones( ) {
-//	auto entity = xti::g_studiomodelrenderer->m_pCurrentEntity;
-//	if ( !entity ) return;
-//	store_bones( entity, entity->index );
-//};
-//
-//void __stdcall xth::hk_studio_setup_bones( ) {
-//	org_studio_setup_bones( );
-//
-//	studio_setup_bones_process_bones( );
-//};
+int xth::_weapon_id = 0;
+bool xth::stuck_dead_afk = false;
+bool xth::stuck_air_afk = false;
 
 void xth::setup_hooks( ) {
-	const auto studio_render_model_addr = address( sdk::vtable( xti::g_studiomodelrenderer, 7 ) ); // studiomodelrenderer->studio_setup_bones[ 7 ]
-
 	xth::swapbuffers::hook( );
 	xth::cl::hook( );
 	xth::hud::hook( );
@@ -31,12 +19,14 @@ void xth::setup_hooks( ) {
 	xth::create( );
 	xth::netchan::hook( );
 	xth::votemenu::hook( );
+	xth::swapbuffers::glhooks( );
+	xth::hud::hudhooks( );
 	xth::scr::hook( );
 	xth::enable( );
-
 };
 
 void xth::disable_hooks( ) {
+	*xti::g_gamespeed = 1000.0;
 	xth::swapbuffers::unhook( );
 	xth::cl::unhook( );
 	xth::hud::unhook( );
@@ -59,6 +49,16 @@ void xth::disable( ) {
 		return;
 
 	if ( MH_Uninitialize( ) != MH_OK )
+		return;
+};
+
+void xth::disable( void* hookptr ) {
+	if ( MH_DisableHook( hookptr ) != MH_OK )
+		return;
+};
+
+void xth::enable( void* hookptr ) {
+	if ( MH_EnableHook( hookptr ) != MH_OK )
 		return;
 };
 

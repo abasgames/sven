@@ -1,5 +1,5 @@
 #pragma once
-
+#include <utility>
 namespace sdk {
 	class c_base_interface {
 	public:
@@ -14,6 +14,10 @@ namespace sdk {
 	}interface_reg_t;
 
 	template< class ty = std::uintptr_t > ty vtable( void* ptr, int index ) {
-		return ( *reinterpret_cast< ty** >( ptr ) )[index];//( *( ty** )ptr )[ index ];
+		return ( *reinterpret_cast< ty** >( ptr ) )[ index ];//( *( ty** )ptr )[ index ];
+	};
+
+	template< typename ty, typename... tty > ty instanced( const char* first, const char* second, tty&... args ) {
+		return reinterpret_cast< ty( * )( tty... ) >( GetProcAddress( GetModuleHandleA( first ), second ) )( std::forward< tty >( args )... );
 	};
 };

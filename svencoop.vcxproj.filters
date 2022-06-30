@@ -46,6 +46,9 @@
     <Filter Include="core\hooks\game">
       <UniqueIdentifier>{8e06e428-dc2c-4a61-8c8c-0344472085c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\tamashi">
+      <UniqueIdentifier>{50bb1ee9-22d2-4a1a-bbd7-cb7bce079761}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cc">
@@ -96,9 +99,6 @@
     <ClCompile Include="vendor\minhook\trampoline.c">
       <Filter>vendor\minhook</Filter>
     </ClCompile>
-    <ClCompile Include="core\hacks\features.cc">
-      <Filter>core\hacks</Filter>
-    </ClCompile>
     <ClCompile Include="core\renderer\menu.cc">
       <Filter>core\renderer</Filter>
     </ClCompile>
@@ -121,6 +121,12 @@
       <Filter>core\hooks\game</Filter>
     </ClCompile>
     <ClCompile Include="core\hooks\game\scr.cc">
+      <Filter>core\hooks\game</Filter>
+    </ClCompile>
+    <ClCompile Include="core\hacks\features.cc">
+      <Filter>core\hacks</Filter>
+    </ClCompile>
+    <ClCompile Include="core\hooks\game\color.cc">
       <Filter>core\hooks\game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -251,9 +257,6 @@
     <ClInclude Include="core\sdk\c_net_channel.hh">
       <Filter>core\sdk</Filter>
     </ClInclude>
-    <ClInclude Include="core\renderer\api.hh">
-      <Filter>core\renderer</Filter>
-    </ClInclude>
     <ClInclude Include="core\renderer\menu.hh">
       <Filter>core\renderer</Filter>
     </ClInclude>
@@ -279,6 +282,27 @@
       <Filter>core\utils</Filter>
     </ClInclude>
     <ClInclude Include="core\utils\hooking.hh">
+      <Filter>core\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_game_ui.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sdk\c_steam_api.hh">
+      <Filter>core\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\tamashi\tamashi.hh">
+      <Filter>vendor\tamashi</Filter>
+    </ClInclude>
+    <ClInclude Include="core\hacks\config.hh">
+      <Filter>core\hacks</Filter>
+    </ClInclude>
+    <ClInclude Include="core\hacks\vars.hh">
+      <Filter>core\hacks</Filter>
+    </ClInclude>
+    <ClInclude Include="xorstr.hh">
+      <Filter>core\hacks</Filter>
+    </ClInclude>
+    <ClInclude Include="core\utils\hash.hh">
       <Filter>core\utils</Filter>
     </ClInclude>
   </ItemGroup>

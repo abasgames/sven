@@ -1,12 +1,14 @@
 #pragma once
 #include <interfaces/interfaces.hh>
 #include <hacks/features.hh>
+#include <hacks/vars.hh>
 #include <utils/utils.hh>
 #include <imgui/imgui.h>
 #include <renderer/renderer.hh>
 #include <format>
 #include <codecvt>
 #include <unordered_map>
+#include <algorithm>
 
 struct box2d_t { float x, y, w, h; };
 
@@ -88,18 +90,6 @@ bool draw_player_box( sdk::cl_entity_t* ent, box2d_t& box ) {
 	box.h = bottom - top;
 
 	return true;
-};
-
-// this is so fucking ugly, but this is the only solution i could find.
-// Basically, the animtime stops if the entity is dead or has frozen,
-// GetClientTime ticks at the same speed as animtime, but considering that clienttime is always ticking, we
-// can use this to make a dormancy check.
-constexpr bool dormant( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
-	return ( entity->curstate.messagenum < local->curstate.messagenum );
-};
-
-constexpr bool stopped_animation( sdk::cl_entity_s* entity ) {
-	return ( xti::g_engine->GetClientTime( ) > entity->curstate.animtime + 0.18f );
 };
 
 using bonetransform_matrix = float[ 128 ][ 3 ][ 4 ];
@@ -224,12 +214,12 @@ void draw_skeleton( sdk::cl_entity_t* entity, int id ) {
 
 void healthbar( float health, box2d_t box ) {
 
-	int g = health * 2.55;
-	int r = 255 - g;
-	int b = 0;
+	int g = static_cast< int >( health * 2.55 );
+	int r = static_cast< int >( 255 - g );
+	int b = static_cast< int >( 0 );
 
 	auto hw = ( ( ( box.h ) * health ) / 100.0f );
-
+	hw = std::clamp( hw, 0.0f, box.h );
 	auto box_x = box.x - 6;
 	Renderer::AddRectFilled( { box_x, box.y }, { 4, box.h }, ImColor( 25, 25, 25, 150 ) );
 	Renderer::AddRectFilled( { box_x + 1, box.y + box.h - hw }, { 2, hw }, ImColor( r, g, b, 255 ) );
@@ -259,6 +249,7 @@ namespace svc {
 		weapon_gauss,
 		weapon_egon,
 		weapon_hgun,
+		weapon_saw,
 		weapon_max,
 
 		ammo_min,
@@ -295,11 +286,21 @@ namespace svc {
 		monster_miniturret,
 		monster_sentry,
 		monster_hgrunt,
+		monster_agrunt,
+		monster_controller,
+		monster_icky,
+		monster_turret,
+		monster_garg,
+		monster_bigmom,
+
 		// opposing force
 		monster_strooper,
 		monster_pitdrone,
 		monster_massn,
 		monster_voltigore,
+		monster_gonome,
+		monster_zombie_soldier,
+		monster_hassassin,
 		monster_max,
 
 		npc_min,
@@ -323,6 +324,7 @@ namespace svc {
 		{ "valve/models/w_gauss.mdl", weapon_gauss },
 		{ "valve/models/w_egon.mdl", weapon_egon },
 		{ "valve/models/w_hgun.mdl", weapon_hgun }, // hgun stands for hornet gun.
+		{ "w_saw.mdl", weapon_saw },
 
 		// ammo types that has backslashes.
 		{ "valve/models/w_medkit.mdl", ammo_medkit }, // w_medkit (belongs to world)
@@ -361,11 +363,21 @@ namespace svc {
 		{ "valve/models/miniturret.mdl", monster_miniturret },
 		{ "valve/models/Sentry.mdl", monster_sentry },
 		{ "hgrunt.mdl", monster_hgrunt },
+		{ "valve/models/agrunt.mdl", monster_agrunt },
+		{ "valve/models/controller.mdl", monster_controller },
+		{ "valve/models/icky.mdl", monster_icky },
+		{ "valve/models/turret.mdl", monster_turret },
+		{ "valve/models/garg.mdl", monster_garg },
+		{ "valve/models/big_mom.mdl", monster_bigmom },
 
 		// opposing force monsters
 		{ "C:\\sierra\\half-life\\gearbox\\models\\strooper.mdl", monster_strooper },
+		{ "c:\\sierra\\half-life\\gearbox\\models\\pit_drone.mdl", monster_pitdrone },
 		{ "c:\\sierra\\half-life\\gearbox\\models\\Massn.mdl", monster_massn },
 		{ "voltigore.mdl", monster_voltigore },
+		{ "gonome.mdl", monster_gonome },
+		{ "C:\\sierra\\half-life\\gearbox\\models\\zombie_soldier.mdl", monster_zombie_soldier },
+		{ "valve/models/hassassin.mdl", monster_hassassin },
 
 		{ "scientist.mdl", npc_scientist },
 		{ "barney.mdl", npc_barney },
@@ -420,6 +432,8 @@ namespace svc {
 			return "egon";
 		case weapon_hgun:
 			return "hornet gun";
+		case weapon_saw:
+			return "m249";
 
 		case ammo_medkit:
 			return "medkit";
@@ -461,6 +475,8 @@ namespace svc {
 			return "head crab";
 		case monster_zombie:
 			return "zombie";
+		case monster_zombie_soldier:
+			return "zombie soldier";
 		case monster_houndeye:
 			return "houndeye";
 		case monster_islave:
@@ -469,6 +485,15 @@ namespace svc {
 			return "bullsquid";
 		case monster_barnacle:
 			return "barnacle";
+		case monster_icky:
+			return "icky";
+		case monster_turret:
+			return "turret";
+		case monster_garg:
+			return "garg";
+		case monster_bigmom:
+			return "testicle monster";
+
 		case monster_miniturret:
 			return "mini turret";
 		case monster_sentry:
@@ -477,10 +502,20 @@ namespace svc {
 			return "human grunt";
 		case monster_strooper:
 			return "strooper";
+		case monster_pitdrone:
+			return "pit drone";
 		case monster_massn:
 			return "massn";
 		case monster_voltigore:
 			return "voltigore";
+		case monster_agrunt:
+			return "agrunt";
+		case monster_controller:
+			return "controller";
+		case monster_gonome:
+			return "gonome";
+		case monster_hassassin:
+			return "assassin";
 
 		case npc_scientist:
 			return "scientist";
@@ -494,10 +529,36 @@ namespace svc {
 	};
 };
 
+void RenderDlight( sdk::cl_entity_s* entity, sdk::color24 color, bool is_player ) {
+	if ( auto exapi = xti::g_engine->pEfxAPI ) {
+		if ( auto dlight = exapi->CL_AllocDlight( entity->index ) ) {
+			auto origin = entity->origin;
+			origin.z -= is_player ? cfg::get< float >( vars.visuals_dlight_height ) : cfg::get< float >( vars.mobs_dlight_height );
+			dlight->origin = origin;
+			dlight->radius = 80.0f;
+			auto hsv = ImColor::HSV( is_player ? cfg::get< float >( vars.visuals_dlight_hue ) : cfg::get< float >( vars.mobs_dlight_hue ), 1.0f, 1.0f );
 
-void RenderAny( sdk::cl_entity_s* entity ) {
+			dlight->color.r = static_cast< byte >( hsv.Value.x * 255.0f );
+			dlight->color.g = static_cast< byte >( hsv.Value.y * 255.0f );
+			dlight->color.b = static_cast< byte >( hsv.Value.z * 255.0f );
+
+			dlight->key = entity->index;
+			dlight->die = xti::g_engine->GetClientTime( ) + 0.01f;
+			dlight->decay = dlight->radius / 5.0f;
+		};
+	};
+};
+
+//constexpr std::uint64_t admin_profile_id = 76561198203141630U;
+
+void RenderAmmo( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
+	if ( !cfg::get< bool >( vars.world ) )
+		return;
+
+	if ( !cfg::get< bool >( vars.world_ammo ) )
+		return;
+
 	sdk::c_vector origin = entity->origin;
-	sdk::c_vector out;
 
 	if ( !entity || !entity->model || !entity->model->name )
 		return;
@@ -508,38 +569,150 @@ void RenderAny( sdk::cl_entity_s* entity ) {
 
 	auto index = svc::UTIL_GetEntityType( entity->model );
 
-	if ( index == svc::entity_unknown && !options::visuals::debug )
+	bool is_ammo = ( index > svc::ammo_min && index < svc::ammo_max );
+	if ( !is_ammo )
 		return;
-
-	if ( index > svc::npc_min && index < svc::npc_max || index > svc::monster_min && index < svc::monster_max )
-		if ( stopped_animation( entity ) )
-			return;
-
 
 	box2d_t box;
 	if ( !draw_player_box( entity, box ) )
 		return;
 
+	if ( xtu::dormant( entity, local ) )
+		return;
+
+	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, ImColor( 67, 168, 214, 255 ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 12.0f );
+};
+
+void RenderWeapons( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
+	if ( !cfg::get< bool >( vars.world ) )
+		return;
+
+	if ( !cfg::get< bool >( vars.world_weapons ) )
+		return;
+
+	sdk::c_vector origin = entity->origin;
+
+	if ( !entity || !entity->model || !entity->model->name )
+		return;
+
+	auto studiohdr = xti::g_studiomodel->Mod_Extradata( entity->model );
+	if ( !studiohdr || studiohdr->numhitboxes == 0 )
+		return;
+
+	auto index = svc::UTIL_GetEntityType( entity->model );
+
+	bool is_weapon = ( index > svc::weapon_min && index < svc::weapon_max );
+	if ( !is_weapon )
+		return;
+
+	box2d_t box;
+	if ( !draw_player_box( entity, box ) )
+		return;
+
+	if ( xtu::dormant( entity, local ) )
+		return;
+
+	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, ImColor( 223, 174, 83, 255 ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 12.0f );
+};
+
+void RenderMisc( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
+	if ( !cfg::get< bool >( vars.world ) )
+		return;
+
+	if ( !cfg::get< bool >( vars.world_misc ) )
+		return;
+
+	sdk::c_vector origin = entity->origin;
+
+	if ( !entity || !entity->model || !entity->model->name )
+		return;
+
+	auto studiohdr = xti::g_studiomodel->Mod_Extradata( entity->model );
+	if ( !studiohdr || studiohdr->numhitboxes == 0 )
+		return;
+
+	auto index = svc::UTIL_GetEntityType( entity->model );
+
+	bool is_ammo = ( index > svc::misc_min && index < svc::misc_max );
+	if ( !is_ammo )
+		return;
+
+	box2d_t box;
+	if ( !draw_player_box( entity, box ) )
+		return;
+
+	if ( xtu::dormant( entity, local ) )
+		return;
+
+	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, ImColor( 195, 149, 233, 255 ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 12.0f );
+};
+
+void RenderMobs( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
+	if ( !cfg::get< bool >( vars.mobs ) )
+		return;
+	sdk::c_vector origin = entity->origin;
+
+	if ( !entity || !entity->model || !entity->model->name )
+		return;
+
+	auto studiohdr = xti::g_studiomodel->Mod_Extradata( entity->model );
+	if ( !studiohdr || studiohdr->numhitboxes == 0 )
+		return;
+
+	auto index = svc::UTIL_GetEntityType( entity->model );
+
+	if ( index == svc::entity_unknown && !cfg::get< bool >( vars.visuals_debug ) )
+		return;
+
+	bool is_mob = ( index > svc::npc_min && index < svc::npc_max || index > svc::monster_min && index < svc::monster_max );
+	if ( !is_mob )
+		return;
+
+	if ( index > svc::npc_min && index < svc::npc_max || index > svc::monster_min && index < svc::monster_max )
+		if ( xtu::stopped_animation( entity ) )
+			return;
+
+	box2d_t box;
+	if ( !draw_player_box( entity, box ) )
+		return;
+
+	if ( xtu::dormant( entity, local ) )
+		return;
+
 	auto color = [ index ]( ) {
-		if ( index > svc::weapon_min && index < svc::weapon_max )
-			return ImColor( 223, 174, 83, 255 );
-		else if ( index > svc::ammo_min && index < svc::ammo_max )
-			return ImColor( 67, 168, 214, 255 );
-		else if ( index > svc::misc_min && index < svc::misc_max )
-			return ImColor( 226, 96, 233, 255 );
-		else if ( index > svc::monster_min && index < svc::monster_max )
+		if ( index > svc::monster_min && index < svc::monster_max )
 			return ImColor( 214, 67, 77, 255 );
 		else if ( index > svc::npc_min && index < svc::npc_max )
 			return ImColor( 67, 214, 128, 255 );
-		else return ImColor( 255, 255, 255, 255 );
+		else 
+			return ImColor( 255, 255, 255, 255 );
 	};
-	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y + box.h / 2.0f }, color( ), svc::UTIL_GetEntityName( entity->model ), true );
 
-	if( index > svc::npc_min && index < svc::npc_max || index > svc::monster_min && index < svc::monster_max )
-		Renderer::AddRect( { box.x, box.y }, { box.w, box.h }, color( ) );
+	if ( cfg::get< bool >( vars.mobs_name ) )
+		Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, color( ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 12.0f );
+
+	if ( cfg::get< bool >( vars.mobs_box ) )
+		if ( index > svc::npc_min && index < svc::npc_max || index > svc::monster_min && index < svc::monster_max )
+			Renderer::AddRectOutline( { box.x, box.y }, { box.w, box.h }, color( ) );
+
+	if ( cfg::get< bool >( vars.mobs_dlight ) ) {
+		auto c = color( );
+		std::uint8_t _r = int( c.Value.x * 255.0f );
+		std::uint8_t _g = int( c.Value.y * 255.0f );
+		std::uint8_t _b = int( c.Value.z * 255.0f );
+		RenderDlight( entity, sdk::color24{ _r, _g, _b }, false );
+	};
 };
 
-void RenderPlayer( sdk::cl_entity_s* entity, int idx ) {
+int AddAppendingString( box2d_t box, const char* string, int index, ImColor color = ImColor( 255, 255, 255, 255 ) ) {
+	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y + box.h + 8.0f + ( index * 10 ) }, ImColor( 255, 255, 255, 255 ), string, true, Renderer::g_pGilroy, 12.0f );
+	return ( index + 1 );
+};
+
+void RenderPlayer( sdk::cl_entity_s* entity, int idx, sdk::cl_entity_s* local ) {
+	if ( !cfg::get< bool >( vars.visuals ) )
+		return;
+
 	box2d_t box;
 	if ( !draw_player_box( entity, box ) )
 		return;
@@ -548,22 +721,80 @@ void RenderPlayer( sdk::cl_entity_s* entity, int idx ) {
 	if ( !player_info || !player_info->name || std::strlen( player_info->name ) < 1 )
 		return;
 
-	if ( get_entity_health( idx ) < 1.0f )
+	bool is_player_dead = get_entity_health( idx ) < 1.0f;
+	if ( !cfg::get< bool >( vars.visuals_corpse ) && is_player_dead ) // additional sanity check.
 		return;
 
-	if ( options::visuals::names ) {
-		Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, ImColor( 255, 255, 255, 255 ), player_info->name, true );
-		Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y + box.h + 8.0f }, ImColor( 255, 255, 255, 255 ), player_info->model, true );
-	}
-	if ( options::visuals::box )
-		Renderer::AddRectOutline( { box.x, box.y }, { box.w, box.h }, ImColor( 70, 186, 128, 255 ) );
+	bool is_dormant = xtu::dormant( entity, local );
+	if ( !cfg::get< bool >( vars.visuals_dormancy ) && is_dormant )
+		return;
 
-	if ( options::visuals::healthbar )
+	if ( cfg::get< bool >( vars.visuals_name ) ) {
+		Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, options::player_important[ entity->index ] ? ImColor::HSV( options::player_important_hue[ entity->index ], 1.0f, 1.0f ) : ImColor( 255, 255, 255, 255 ), player_info->name, true, Renderer::g_pGilroy, 12.0f );
+
+		if ( is_player_dead )
+			Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 18.0f }, ImColor( 255, 0, 0, 255 ), "*DEAD*", true, Renderer::g_pGilroy, 12.0f );
+
+		//bool is_admin = player_info->m_nSteamID == admin_profile_id;
+		//
+		//if( is_admin )
+		//	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 18.0f }, ImColor( 255, 0, 0, 255 ), "[ADMIN]", true, Renderer::g_pGilroy, 12.0f );
+	};
+
+	if ( is_player_dead )
+		return;
+
+	int m_nIndex = 0;
+	if ( cfg::get< bool >( vars.visuals_skininfo ) )
+		m_nIndex = AddAppendingString( box, player_info->model, m_nIndex );
+
+	if ( cfg::get< bool >( vars.visuals_origin ) ) {
+		auto c = entity->curstate.origin;
+		m_nIndex = AddAppendingString( box, std::format( "{:.2f}, {:.2f}, {:.2f}", c.x, c.y, c.z ).data( ), m_nIndex );
+		m_nIndex = AddAppendingString( box, std::format( "messagenum: {}", entity->curstate.messagenum ).data( ), m_nIndex );
+	}
+
+	if ( cfg::get< bool >( vars.visuals_angles ) ) {
+		auto c = entity->curstate.angles;
+		m_nIndex = AddAppendingString( box, std::format( "{:.2f}, {:.2f}, {:.2f} :: {:.2f}", c.x, c.y, c.z, c.length_sqrtf( ) ).data( ), m_nIndex );
+	}
+
+	if ( cfg::get< bool >( vars.visuals_minsmaxs ) ) {
+		auto mins = entity->curstate.mins;
+		m_nIndex = AddAppendingString( box, std::format( "mins: {:.2f}, {:.2f}, {:.2f} :: {:.2f}", mins.x, mins.y, mins.z, mins.length_sqrtf( ) ).data( ), m_nIndex );
+
+		auto maxs = entity->curstate.maxs;
+		m_nIndex = AddAppendingString( box, std::format( "maxs: {:.2f}, {:.2f}, {:.2f} :: {:.2f}", maxs.x, maxs.y, maxs.z, maxs.length_sqrtf( ) ).data( ), m_nIndex );
+	}
+
+	if ( cfg::get< bool >( vars.visuals_box ) )
+		Renderer::AddRectOutline( { box.x, box.y }, { box.w, box.h }, is_dormant ? ImColor( 255, 255, 255, 255 ) : ImColor::HSV( cfg::get< float >( vars.visuals_hue ), 1.0f, 1.0f ) );
+
+	if ( cfg::get< bool >( vars.visuals_snaplines ) ) {
+		Renderer::AddLine( { static_cast< float >( GetSystemMetrics( SM_CXSCREEN ) / 2 ), static_cast< float >( GetSystemMetrics( SM_CYSCREEN ) / 2 ) }, { box.x + box.w / 2.0f, box.y + box.h }, ImColor( 70, 186, 128, 255 ) );
+	}
+
+	if ( cfg::get< bool >( vars.visuals_health ) )
 		healthbar( get_entity_health( idx ), box );
+
+	if ( cfg::get< bool >( vars.visuals_dlight ) )
+		RenderDlight( entity, { 0, 255, 0 }, true );
 };
 
 namespace visuals {
+	void on_visuals_crosshair( ) {
+		if ( !cfg::get< bool >( vars.crosshair ) )
+			return;
 
+		const auto position = ImVec2( GetSystemMetrics( SM_CXSCREEN ) / 2.0f, GetSystemMetrics( SM_CYSCREEN ) / 2.0f );
+		auto crosshair_color = ImColor::HSV( cfg::get< float >( vars.crosshair_hue ), cfg::get< float >( vars.crosshair_sat ), 1.0f );
+		const float gap = cfg::get< float >( vars.crosshair_gap );
+		Renderer::AddRectOutline( { position.x - 5.0f - gap, position.y }, { 5.0f, 1.0f }, crosshair_color );
+		Renderer::AddRectOutline( { position.x + gap, position.y }, { 5.0f, 1.0f }, crosshair_color );
+
+		Renderer::AddRectOutline( { position.x, position.y - 5.0f - gap }, { 1.0f, 5.0f }, crosshair_color );
+		Renderer::AddRectOutline( { position.x, position.y + gap }, { 1.0f, 5.0f }, crosshair_color );
+	}
 	void on_visuals_esp( ) {
 		auto localplayer = xti::g_engine->GetLocalPlayer( );
 		if ( !localplayer )
@@ -574,20 +805,23 @@ namespace visuals {
 			if ( !entity )
 				continue;
 
-			if ( !entity->model || entity == localplayer )
+			if ( !entity->model )
+				continue;
+
+			if ( !cfg::get< bool >( vars.visuals_self ) && entity == localplayer )
 				continue;
 
 			if ( !entity->model->name || !std::strstr( entity->model->name, ".mdl" ) )
 				continue;
 
-			if ( dormant( entity, localplayer ) )
-				continue;
-
 			if ( entity->player ) {
-				RenderPlayer( entity, i );
+				RenderPlayer( entity, i, localplayer );
 			}
 			else {
-				RenderAny( entity );
+				RenderAmmo( entity, localplayer );
+				RenderMisc( entity, localplayer );
+				RenderWeapons( entity, localplayer );
+				RenderMobs( entity, localplayer );
 			};
 		};
 	};

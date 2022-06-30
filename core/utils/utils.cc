@@ -11,6 +11,9 @@
 
 bool xtu::send_packet = true;
 
+float xtu::viewangles_x = 0.0f;
+float xtu::viewangles_y = 0.0f;
+
 std::uintptr_t xtu::find_pattern( const std::string_view& from, const std::string_view& pattern ) noexcept {
 	const auto base = get_module_info( from );
 	const auto base_start = base.first;
@@ -144,18 +147,30 @@ void xtu::vector_angles( const sdk::c_vector& forward, sdk::c_vector& angles ) {
 	angles[ 0 ] = pitch;
 	angles[ 1 ] = yaw;
 	angles[ 2 ] = 0;
+}
+void xtu::angle_vectors( const sdk::c_vector& angles, sdk::c_vector* forward )
+{
+	float sp, sy, cp, cy;
+
+	sy = std::sinf( deg2radf( angles[ 1 ] ) );
+	cy = std::cosf( deg2radf( angles[ 1 ] ) );
+	sp = std::sinf( deg2radf( angles[ 0 ] ) );
+	cp = std::cosf( deg2radf( angles[ 0 ] ) );
+
+	forward->x = cp * cy;
+	forward->y = cp * sy;
+	forward->z = -sp;
 };
 
 bool xtu::world_to_screen( sdk::c_vector in, sdk::c_vector& out ) {
-
-	int iScreenCenterX = static_cast< int >( 1920 / 2 );
-	int iScreenCenterY = static_cast< int >( 1080 / 2 );
+	const auto screen_center_x = static_cast< int >( GetSystemMetrics( SM_CXSCREEN ) / 2 );
+	const auto screen_center_y = static_cast< int >( GetSystemMetrics( SM_CYSCREEN ) / 2 );
 
 	sdk::c_vector _out;
-	int iRasterizer = xti::g_engine->pTriAPI->WorldToScreen( in, _out );
-	if ( _out[ 0 ] < 1 && _out[ 1 ] < 1 && _out[ 0 ] > -1 && _out[ 1 ] > -1 && !iRasterizer ) {
-		out.x = _out[ 0 ] * iScreenCenterX + iScreenCenterX;
-		out.y = -_out[ 1 ] * iScreenCenterY + iScreenCenterY;
+	auto rasterizer = xti::g_engine->pTriAPI->WorldToScreen( in, _out );
+	if ( _out[ 0 ] < 1 && _out[ 1 ] < 1 && _out[ 0 ] > -1 && _out[ 1 ] > -1 && !rasterizer ) {
+		out.x = _out[ 0 ] * screen_center_x + screen_center_x;
+		out.y = -_out[ 1 ] * screen_center_y + screen_center_y;
 		return true;
 	};
 
@@ -181,6 +196,7 @@ void xtu::fix_movement( sdk::c_vector& base_angles, sdk::c_user_cmd* cmd ) {
 // asked swift if he had an idea on how i should get the cursor pos, and he told me to unhook their functions.
 // so credits to him for that.
 void xtu::overlay_unhook_function( void* func, bool rehook ) { 
+	// Unhook
 	auto dw_unhook_func = xtu::find( "gameoverlayrenderer.dll", "55 8B EC C7" );
 
 	using fn = void( * )( void* );
@@ -192,6 +208,7 @@ void xtu::overlay_unhook_function( void* func, bool rehook ) {
 };
 
 void xtu::begin_read( void* buffer, int size ) {
+	// BEGIN_READ
 	auto dw_beginread = xtu::find( "client.dll", "8B 44 24 08 A3 ? ? ? ? 8B 44" );
 
 	using fn = void( * )( void*, int );
@@ -203,6 +220,7 @@ void xtu::begin_read( void* buffer, int size ) {
 };
 
 char* xtu::read_string( ) {
+	// READ_STRING
 	auto dw_readstr = xtu::find( "client.dll", "8B 15 ? ? ? ? 33 C0 53" );
 
 	using fn = char* ( * )( );
@@ -214,12 +232,25 @@ char* xtu::read_string( ) {
 };
 
 double xtu::read_coord( ) {
+	// READ_COORD
 	auto dw_readcoord = xtu::find( "client.dll", "51 56 8B 35 ? ? ? ? 57 8D 7E 04 3B 3D" );
 
 	using fn = double( * )( );
 	static auto ofn = dw_readcoord.as< fn >( );
 	if ( !ofn )
 		return 0.0;
+
+	return ofn( );
+};
+
+unsigned short xtu::read_short( ) {
+	// READ_SHORT
+	auto dw_readshort = xtu::find( "client.dll", "8B 0D ? ? ? ? 56 8D 71 02" );
+
+	using fn = unsigned short( * )( );
+	static auto ofn = dw_readshort.as< fn >( );
+	if ( !ofn )
+		return 0;
 
 	return ofn( );
 };
@@ -241,6 +272,7 @@ void* xtu::usermsg_org( const char* message ) {
 };
 
 BYTE xtu::read_byte( ) {
+	// READ_BYTE
 	auto dw_readbyte = xtu::find( "client.dll", "8B 0D ? ? ? ? 8D 51 01 3B 15 ? ? ? ? 7E 0E C7 05" );
 
 	using fn = BYTE( * )( );
@@ -249,6 +281,37 @@ BYTE xtu::read_byte( ) {
 		return 0x00;
 
 	return ofn( );
+}
+char* xtu::util_get_map_name( )
+{
+	// UTIL_GetMapName
+	auto dw_mapname = xtu::find( "client.dll", "FF 15 ? ? ? ? 85 C0 74 61 68" );
+	using fn = char* ( * )( );
+	static auto ofn = dw_mapname.as< fn >( );
+	if ( !ofn )
+		return nullptr;
+
+	return ofn( );
+}
+const char* xtu::get_name_changed( int index ) // yeah, im from the csgo community so you knew i had to do it.
+{
+	switch ( index ) {
+	case 0: return "     ";
+	case 1: return "    g";
+	case 2: return "   gu";
+	case 3: return "  guw";
+	case 4: return " guwi";
+	case 5: return "guwi ";
+	case 6: return "uwi  ";
+	case 7: return "wi   ";
+	case 8: return "i    ";
+	case 9: return "     ";
+	};
+	return "unknown";
+}
+const char* xtu::get_steam_name( )
+{
+	return sdk::instanced< const char* >( "steam_api.dll", "SteamAPI_ISteamFriends_GetPersonaName" );
 };
 
 void xtu::buffered_localise_text_string( const char* msg ) {
@@ -259,5 +322,64 @@ void xtu::buffered_localise_text_string( const char* msg ) {
 	if ( !org )
 		return;
 
-	xti::g_engine->Con_Printf( "[sven] sent %s -> 0x%X, got [%s]\n", msg, org( msg ), org( msg ) );
+	xti::g_engine->Con_Printf( "[sharingan] sent %s -> 0x%X, got [%s]\n", msg, org( msg ), org( msg ) );
+};
+
+int xtu::insert_color_change( DWORD* ecx, int a2 ) // 55 8B EC 8B 91 ? ? ? ? 83 EC 10 8B 45 08 C1 E2 04 03 91
+{
+	auto dw_insert_color_change = xtu::find( "GameUI.dll", "55 8B EC 8B 91 ? ? ? ? 83 EC 10 8B 45 08 C1 E2 04 03 91" );
+
+	using fn = int( __thiscall* )( DWORD*, int );
+	static auto ofn = dw_insert_color_change.as< fn >( );
+	if ( !ofn )
+		return -1;
+
+	return ofn( ecx, a2 );
+};
+
+int xtu::insert_text( void* ecx, const char* msg ) // 55 8B EC 83 EC 08 A1 ? ? ? ? 33 C5 89 45
+{
+	auto dw_print_to_console = xtu::find( "GameUI.dll", "55 8B EC 83 EC 08 A1 ? ? ? ? 33 C5 89 45" );
+
+	using fn = int( __thiscall* )( void*, const char* );
+	static auto ofn = dw_print_to_console.as< fn >( );
+	if ( !ofn )
+		return -1;
+
+	return ofn( ecx, msg );
+};
+
+int xtu::color_print( DWORD* thisptr, const char* msg, sdk::c_color32 color ) {
+	insert_color_change( ( DWORD* )thisptr[ 0x46 ], color.hex_abgr( ) );
+	return insert_text( ( void* )thisptr[ 0x46 ], ( const char* )msg );
+}
+
+void xtu::console_color_printf( sdk::c_color32 color, const char* msg, ... ) {
+	char buff[ 256 ];
+	va_list list;
+	va_start( list, msg );
+	vsprintf_s( buff, sizeof( buff ), msg, list );
+	va_end( list );
+
+	color_print( *( DWORD** )( ( uintptr_t )xti::g_console + 8 ), buff, color );
+};
+
+// this is so fucking ugly, but this is the only solution i could find.
+// Basically, the animtime stops if the entity is dead or has frozen,
+// GetClientTime ticks at the same speed as animtime, but considering that clienttime is always ticking, we
+// can use this to make a dormancy check.
+bool xtu::dormant( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
+	return ( entity->curstate.messagenum < local->curstate.messagenum );
+};
+
+bool xtu::stopped_animation( sdk::cl_entity_s* entity ) {
+	return ( xti::g_engine->GetClientTime( ) > entity->curstate.animtime + 0.18f );
+};
+
+bool xtu::is_player_dead( ) { return ( xti::g_playermove->dead || xti::g_playermove->iuser1 != 0 ); };
+bool xtu::is_player_movetype( ) { return ( xti::g_playermove->movetype & MOVETYPE_NOCLIP || ( xti::g_playermove->movetype == MOVETYPE_FLY ) ); };
+bool xtu::is_player_inwater( ) { return ( xti::g_playermove->flags & FL_INWATER ); }
+bool xtu::is_player_dead_non_observer( )
+{
+	return xti::g_playermove->dead;
 };

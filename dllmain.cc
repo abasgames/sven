@@ -4,8 +4,14 @@
 
 #include <interfaces/interfaces.hh>
 #include <hooks/hooks.hh>
+#include <hacks/vars.hh>
+#include <filesystem>
 
 auto main_instance( void* instance ) {
+	if ( std::filesystem::create_directory( "sharingan" ) )
+		cfg::save_config( ( std::filesystem::current_path( ) / "sharingan" / "sharingan.cfg" ).string( ).data( ) );
+	else
+		cfg::load_config( ( std::filesystem::current_path( ) / "sharingan" / "sharingan.cfg" ).string( ).data( ) );
 	xti::setup_interfaces( );
 	xth::setup_hooks( );
 
@@ -17,17 +23,16 @@ auto main_instance( void* instance ) {
 bool __stdcall DllMain( HINSTANCE hinst, DWORD ul_reason_for_call, void* lp_reserved ) {
 	DisableThreadLibraryCalls( static_cast< HMODULE >( hinst ) );
 	switch ( ul_reason_for_call ) {
-	case DLL_PROCESS_ATTACH:
-		if ( auto thread_handle = CreateThread( NULL, 0, reinterpret_cast< LPTHREAD_START_ROUTINE >( main_instance ), hinst, NULL, 0 ) )
-			CloseHandle( thread_handle );
-		break;
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-		break;
-	case DLL_PROCESS_DETACH: {
-		xth::disable_hooks( );
-	}
-		break;
+		case DLL_PROCESS_ATTACH: {
+			if ( auto thread_handle = CreateThread( NULL, 0, reinterpret_cast< LPTHREAD_START_ROUTINE >( main_instance ), hinst, NULL, 0 ) )
+				CloseHandle( thread_handle );
+		}break;
+		case DLL_THREAD_ATTACH:
+		case DLL_THREAD_DETACH:
+			break;
+		case DLL_PROCESS_DETACH: {
+			xth::disable_hooks( );
+		}break;
 	};
 
 	return true;

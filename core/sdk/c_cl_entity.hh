@@ -78,11 +78,6 @@ namespace sdk {
 
 	typedef struct
 	{
-		byte r, g, b;
-	} color24;
-
-	typedef struct
-	{
 		unsigned r, g, b, a;
 	} colorVec;
 
@@ -251,6 +246,10 @@ namespace sdk {
 		float		fuser2;
 		float		fuser3;
 		float		fuser4;
+
+		__forceinline constexpr bool is_nades_or_other( ) const {
+			return ( m_iId == 0 || m_iId == 12 );
+		};
 	} weapon_data_t;
 
 

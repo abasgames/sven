@@ -29,5 +29,7 @@ namespace sdk {
 		const char* get_commands( ) {
 			return sdk::vtable< const char* ( __thiscall* )( void* ) >( this, 4 )( this );
 		};
+
+
 	};
 };

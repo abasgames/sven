@@ -28,6 +28,10 @@ namespace sdk {
 			sdk::vtable< void( __thiscall* )( void*, int ) >( this, 130 )( this, idx );
 		};
 
+		void set_active_info( int info ) {
+			sdk::vtable< void( __thiscall* )( void*, int ) >( this, 131 )( this, info );
+		};
+
 		void update( ) {
 			sdk::vtable< void( __thiscall* )( void* ) >( this, 132 )( this );
 		};

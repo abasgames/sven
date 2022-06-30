@@ -96,7 +96,7 @@ namespace sdk {
 		void ( *pfnSetCrosshair )		( HSPRITE hspr, wrect_t rc, int r, int g, int b );
 		struct cvar_s* ( *pfnRegisterVariable )	( const char* szName, const char* szValue, int flags );
 		float						( *pfnGetCvarFloat )		( const char* szName );
-		char* ( *pfnGetCvarString )		( char* szName );
+		const char* ( *pfnGetCvarString )		( const char* szName );
 		int	( *pfnAddCommand )			( const char* cmd_name, void ( *function )( void ) );
 		int	( *pfnHookUserMsg )			( const char* szMsgName, void* pfn );
 		int	( *pfnServerCmd )			( const char* szCmdString );
@@ -226,8 +226,8 @@ namespace sdk {
 
 	typedef struct cvar_s
 	{
-		char* name;
-		char* string;
+		const char* name;
+		const char* string;
 		int		flags;
 		float	value;
 		struct cvar_s* next;
@@ -270,7 +270,22 @@ namespace sdk {
 	struct TEMPENTITY;
 	struct BEAM;
 
-	struct dlight_t;
+	typedef struct
+	{
+		byte r, g, b;
+	} color24;
+
+	typedef struct dlight_s
+	{
+		sdk::c_vector origin;
+		float radius;
+		color24 color;
+		float die;		// stop lighting after this time
+		float decay;	// drop this each second
+		float minlight; // don't add when contributing less
+		int key;
+		int dark; // subtracts light instead of adding
+	} dlight_t;
 
 	struct efx_api_s
 	{
