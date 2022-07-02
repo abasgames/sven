@@ -209,6 +209,8 @@
     <ClInclude Include="core\utils\hash.hh" />
     <ClInclude Include="core\utils\hooking.hh" />
     <ClInclude Include="core\utils\utils.hh" />
+    <ClInclude Include="vendor\fonts\04b03.hh" />
+    <ClInclude Include="vendor\fonts\gilroy.hh" />
     <ClInclude Include="vendor\imgui\imconfig.h" />
     <ClInclude Include="vendor\imgui\imgui.h" />
     <ClInclude Include="vendor\imgui\imgui_impl_opengl3.h" />
@@ -226,7 +228,6 @@
     <ClInclude Include="vendor\minhook\hde\table64.h" />
     <ClInclude Include="vendor\minhook\minhook.h" />
     <ClInclude Include="vendor\minhook\trampoline.h" />
-    <ClInclude Include="vendor\tamashi\tamashi.hh" />
     <ClInclude Include="xorstr.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
