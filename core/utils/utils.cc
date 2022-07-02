@@ -293,26 +293,6 @@ char* xtu::util_get_map_name( )
 
 	return ofn( );
 }
-const char* xtu::get_name_changed( int index ) // yeah, im from the csgo community so you knew i had to do it.
-{
-	switch ( index ) {
-	case 0: return "     ";
-	case 1: return "    g";
-	case 2: return "   gu";
-	case 3: return "  guw";
-	case 4: return " guwi";
-	case 5: return "guwi ";
-	case 6: return "uwi  ";
-	case 7: return "wi   ";
-	case 8: return "i    ";
-	case 9: return "     ";
-	};
-	return "unknown";
-}
-const char* xtu::get_steam_name( )
-{
-	return sdk::instanced< const char* >( "steam_api.dll", "SteamAPI_ISteamFriends_GetPersonaName" );
-};
 
 void xtu::buffered_localise_text_string( const char* msg ) {
 	auto dw_buffered = xtu::find( "client.dll", "53 56 8B 74 24 0C BB ? ? ? ? 57" );

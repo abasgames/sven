@@ -129,9 +129,9 @@ struct notification_t {
 	bool dead( ) { return lerp_full_completion; };
 
 	void draw( ) {
-		const auto t0 = Renderer::g_pFont->CalcTextSizeA( 8.0f, FLT_MAX, 0.0f, text_one );
-		const auto t1 = Renderer::g_pFont->CalcTextSizeA( 8.0f, FLT_MAX, 0.0f, text_two );
-		const auto t2 = Renderer::g_pFont->CalcTextSizeA( 8.0f, FLT_MAX, 0.0f, text_three );
+		const auto t0 = Renderer::g_pFont->CalcTextSizeA( 10.0f, FLT_MAX, 0.0f, text_one );
+		const auto t1 = Renderer::g_pFont->CalcTextSizeA( 10.0f, FLT_MAX, 0.0f, text_two );
+		const auto t2 = Renderer::g_pFont->CalcTextSizeA( 10.0f, FLT_MAX, 0.0f, text_three );
 
 		const float text_total_width = ( t0.x + t1.x + t2.x ) + 16.0f;
 		auto text_position_x = -text_total_width;
