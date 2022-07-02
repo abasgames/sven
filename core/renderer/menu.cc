@@ -9,6 +9,7 @@
 
 ImVec2 window_menu_size = ImVec2( 625.0f, 50.0f );
 ImVec2 window_menu_main = ImVec2( 625.0f, 452.0f );
+ImVec2 window_menu_pos = ImVec2( 400.0f, 400.0f );
 ImVec2 window_header_position;
 
 bool Mui::Keys[ 256 ] = { 0 };
@@ -115,7 +116,7 @@ void RenderMovement( Mui::c_window* window ) {
             groupbox->add( std::make_unique< Mui::c_combobox >( "speedhack mode", &cfg::get< int >( vars.speedhack_mode ), speedhack_modes, MUI_SIZE( speedhack_modes ) ) );
 
             if ( cfg::get< int >( vars.speedhack_mode ) == 4 )
-                groupbox->add( std::make_unique< Mui::c_slider_float >( "ups", &cfg::get< float >( vars.speedhack_factor ), 0.0f, 10000.0f, "ups" ) );
+                groupbox->add( std::make_unique< Mui::c_slider_float >( "ups", &cfg::get< float >( vars.speedhack_factor ), 0.0f, 100.0f, "ups" ) );
         }
 
         groupbox->add( std::make_unique< Mui::c_checkbox >( "jumpbug", &cfg::get< bool >( vars.jumpbug ) ) );
@@ -484,13 +485,31 @@ void RenderOther( Mui::c_window* window ) {
             set_changed_model = false;
         };
         window->add( std::move( groupbox ) );
-    }
-}
+    };
+};
 
+static bool is_holding_menu = false;
 void Mui::RenderOldMenu( ) {
     Renderer::Setup( ImGui::GetBackgroundDrawList( ) );
+
     if ( options::show_menu ) {
-        auto window = std::make_unique< Mui::c_window >( "hack", Mui::vec2_t( 400.0f, 400.0f ), _CORE_BUILD_DATE );
+        float posx = cfg::get< float >( vars.menu_pos_x );
+        float posy = cfg::get< float >( vars.menu_pos_y );
+        if ( io.MousePos.x > posx && io.MousePos.y > posy && io.MousePos.x < posx + 50.0f && io.MousePos.y < posy + 20.0f )
+            if ( io.MouseDown[ 0 ] )
+                is_holding_menu = true;
+
+        if ( !io.MouseDown[ 0 ] && is_holding_menu )
+            is_holding_menu = false;
+
+        if ( is_holding_menu ) {
+            //window_menu_pos.x = io.MousePos.x;
+            //window_menu_pos.y = io.MousePos.y;
+            cfg::get< float >( vars.menu_pos_x ) = io.MousePos.x;
+            cfg::get< float >( vars.menu_pos_y ) = io.MousePos.y;
+        }
+
+        auto window = std::make_unique< Mui::c_window >( "hack", Mui::vec2_t( posx, posy ), _CORE_BUILD_DATE );
         //window->debug( );
         window->begin( );
         //{

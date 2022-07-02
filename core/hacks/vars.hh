@@ -149,6 +149,9 @@ struct vars_t {
 
 	ADD_VAR( model_color_top, float, 0.0f );
 	ADD_VAR( model_color_bottom, float, 0.0f );
+
+	ADD_VAR( menu_pos_x, float, 10.0f );
+	ADD_VAR( menu_pos_y, float, 10.0f );
 };
 
 inline vars_t vars;

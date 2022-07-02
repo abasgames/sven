@@ -1151,9 +1151,9 @@ namespace createmove {
 		//	run ? m_cmd->forwardmove -= xti::g_playermove->clientmaxspeed : m_cmd->forwardmove += xti::g_playermove->clientmaxspeed;
 		//}
 
-		auto player_velocity = xti::g_playermove->velocity.length_sqrtf( );
-		if ( player_velocity <= 100.0f )
-			return;
+		//auto player_velocity = xti::g_playermove->velocity.length_sqrtf( );
+		//if ( player_velocity <= 100.0f )
+		//	return;
 
 		if ( ( m_cmd->buttons & sdk::in_forward && m_cmd->buttons & sdk::in_move_left ) || ( m_cmd->buttons & sdk::in_forward && m_cmd->buttons & sdk::in_move_right ) ) { // FORWARD + RIGHT
 
