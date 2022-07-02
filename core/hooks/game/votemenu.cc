@@ -52,7 +52,7 @@ int __fastcall hk_votepopup_close( void* ecx, void* edx ) {
 int xth::hk_end_vote( const char* message, int size, void* buffer ) {
 	Renderer::PushNotification( "The ", "vote", " has ended.", 4000.0f, ImColor( 112, 241, 144, 255 ) );
 	if( cfg::get< bool >( vars.vote ) && cfg::get< bool >( vars.vote_kill ) && Mui::is_key_toggle( cfg::get< int >( vars.vote_kill_key ) ) )
-	if ( auto str = xti::g_engine->pfnGetCvarString( "sharingan_kill" ) ) {
+	if ( auto str = xti::g_engine->pfnGetCvarString( "hack_kill" ) ) {
 		//for ( auto it = 0; it < xti::g_engine->GetMaxClients( ); it++ ) {
 		//	auto ent = xti::g_engine->GetEntityByIndex( it );
 		//	if ( !ent )

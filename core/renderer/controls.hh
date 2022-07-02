@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <unordered_map>
 
-#define menucolor ImColor( 255, 147, 183, 255 )//50, 135, 200, 255 )
+#define menucolor ImColor( 255, 147, 183, 255 )
 #define menucolor_darken ImColor( 255, 123, 154, 255 )
 #define MUI_BUILD "Build date: " __DATE__ " @ " __TIME__
 
@@ -18,11 +18,7 @@ namespace Mui {
     void SetupIO( ) {
         io = ImGui::GetIO( ); ( void )io;
     };
-    const char* GetPCName( ) {
-        auto username_length = static_cast< DWORD >( 0xff );
-        GetUserNameA( username_buffer, &username_length );
-        return username_buffer;
-    };
+    
     struct vec2_t {
         float x, y;
         vec2_t( ) : x( 0.0f ), y( 0.0f ) { };
@@ -523,7 +519,6 @@ namespace Mui {
         float* pval;
         float vmin;
         float vmax;
-        const char* szdelim;
         float slider_pad_y;
         float _sat;
     };

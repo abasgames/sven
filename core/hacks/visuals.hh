@@ -580,7 +580,7 @@ void RenderAmmo( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
 	if ( xtu::dormant( entity, local ) )
 		return;
 
-	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, ImColor( 67, 168, 214, 255 ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 12.0f );
+	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, ImColor( 67, 168, 214, 255 ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 10.0f );
 };
 
 void RenderWeapons( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
@@ -612,7 +612,7 @@ void RenderWeapons( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
 	if ( xtu::dormant( entity, local ) )
 		return;
 
-	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, ImColor( 223, 174, 83, 255 ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 12.0f );
+	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, ImColor( 223, 174, 83, 255 ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 10.0f );
 };
 
 void RenderMisc( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
@@ -644,7 +644,7 @@ void RenderMisc( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
 	if ( xtu::dormant( entity, local ) )
 		return;
 
-	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, ImColor( 195, 149, 233, 255 ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 12.0f );
+	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, ImColor( 195, 149, 233, 255 ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 10.0f );
 };
 
 void RenderMobs( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
@@ -689,7 +689,7 @@ void RenderMobs( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
 	};
 
 	if ( cfg::get< bool >( vars.mobs_name ) )
-		Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, color( ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 12.0f );
+		Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, color( ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 10.0f );
 
 	if ( cfg::get< bool >( vars.mobs_box ) )
 		if ( index > svc::npc_min && index < svc::npc_max || index > svc::monster_min && index < svc::monster_max )
@@ -705,7 +705,7 @@ void RenderMobs( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
 };
 
 int AddAppendingString( box2d_t box, const char* string, int index, ImColor color = ImColor( 255, 255, 255, 255 ) ) {
-	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y + box.h + 8.0f + ( index * 10 ) }, ImColor( 255, 255, 255, 255 ), string, true, Renderer::g_pGilroy, 12.0f );
+	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y + box.h + 8.0f + ( index * 10 ) }, ImColor( 255, 255, 255, 255 ), string, true, Renderer::g_pGilroy, 10.0f );
 	return ( index + 1 );
 };
 
@@ -729,11 +729,14 @@ void RenderPlayer( sdk::cl_entity_s* entity, int idx, sdk::cl_entity_s* local ) 
 	if ( !cfg::get< bool >( vars.visuals_dormancy ) && is_dormant )
 		return;
 
+	if ( cfg::get< bool >( vars.visuals_only_important ) && !options::player_important[ entity->index ] )
+		return;
+
 	if ( cfg::get< bool >( vars.visuals_name ) ) {
-		Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, options::player_important[ entity->index ] ? ImColor::HSV( options::player_important_hue[ entity->index ], 1.0f, 1.0f ) : ImColor( 255, 255, 255, 255 ), player_info->name, true, Renderer::g_pGilroy, 12.0f );
+		Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, options::player_important[ entity->index ] ? ImColor::HSV( options::player_important_hue[ entity->index ], 1.0f, 1.0f ) : ImColor( 255, 255, 255, 255 ), player_info->name, true, Renderer::g_pGilroy, 10.0f );
 
 		if ( is_player_dead )
-			Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 18.0f }, ImColor( 255, 0, 0, 255 ), "*DEAD*", true, Renderer::g_pGilroy, 12.0f );
+			Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 18.0f }, ImColor( 255, 0, 0, 255 ), "*DEAD*", true, Renderer::g_pGilroy, 10.0f );
 
 		//bool is_admin = player_info->m_nSteamID == admin_profile_id;
 		//

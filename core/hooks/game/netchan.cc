@@ -21,11 +21,10 @@ bool FreezeOnDeath(sdk::netchan_t* netchan, int length, byte* data ) {
 	if ( !Mui::is_key_toggle( cfg::get< int >( vars.airstuck_on_death_key ) ) )
 		return false;
 
-	if ( !xtu::is_player_dead_non_observer( ) )
+	if ( !xtu::is_player_dead( ) )
 		return false;
 
 	org_netchan_transmit( netchan, 0, nullptr );
-	xth::stuck_dead_afk = true;
 	return true;
 };
 
@@ -39,13 +38,13 @@ bool FreezeOnAlive( sdk::netchan_t* netchan, int length, byte* data ) {
 	if ( !Mui::is_key_toggle( cfg::get< int >( vars.airstuck_key ) ) )
 		return false;
 
-	if ( xtu::is_player_dead( ) )
+	if ( xtu::is_player_dead( ) && cfg::get< bool >( vars.airstuck_on_death ) )
 		return false;
 
 	if ( cfg::get< bool >( vars.airstuck_air_afk ) && !( xti::g_playermove->flags & FL_ONGROUND ) ) {
 		if ( !b_in_motion ) {
 			if ( GetTickCount64( ) > m_nTickCount ) {
-				m_nTickCount = GetTickCount64( ) + 7000.0f;
+				m_nTickCount = GetTickCount64( ) + ( 1000.0f * 15.0f );
 				b_in_motion = true;
 			};
 		};
@@ -67,13 +66,12 @@ bool FreezeOnAlive( sdk::netchan_t* netchan, int length, byte* data ) {
 			return false;
 		};
 	};
+
+	return false;
 };
 
 void xth::hk_netchan_transmit( sdk::netchan_t* netchan, int length, byte* data ) {
-	if ( FreezeOnAlive( netchan, length, data ) )
-		return;
-
-	if ( FreezeOnDeath( netchan, length, data ) )
+	if ( FreezeOnDeath( netchan, length, data ) || FreezeOnAlive( netchan, length, data ) )
 		return;
 
 	org_netchan_transmit( netchan, length, data );

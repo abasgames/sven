@@ -55,4 +55,5 @@ namespace options {
 	extern int show_menu_tab;
 	extern bool player_important[ 64 ];
 	extern float player_important_hue[ 64 ];
+	extern bool player_glue[ 64 ];
 };

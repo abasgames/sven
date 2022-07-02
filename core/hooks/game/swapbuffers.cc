@@ -29,6 +29,8 @@ int AppendModules( int idx, const char* module_info, ImColor color = ImColor( 0,
 };
 
 void RenderModules( ) {
+	// As of right now, this is the only solution i have. Sure, i could just put every single element that has an hotkey to an array and just
+	// iterate through them all, but im lazy and this will have to do it.
 	int idx = 0;
 	if ( cfg::get< bool >( vars.airstuck ) && Mui::is_key_toggle( cfg::get< int >( vars.airstuck_key ) ) )
 		idx = AppendModules( idx, "Airstuck key is ON." );
@@ -166,6 +168,7 @@ bool __stdcall xth::hk_swap_buffers( HDC hdc ) {
 		ImGui_ImplOpenGL3_Init( );
 
 		Renderer::PushNotification( "Press '", "INSERT", "' to open the menu.", 4000.0f );
+		Renderer::PushNotification( "Open '", "CONSOLE", "' to see the latest news.", 7000.0f, ImColor( 242, 196, 102, 255 ) );
 
 		g_initialize_once = true;
 	};

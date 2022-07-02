@@ -862,20 +862,13 @@ namespace createmove {
 			if ( !studiohdr || studiohdr->numhitboxes == 0 )
 				continue;
 
-			if ( cfg::get< bool >( vars.follow_guwi ) ) {
-				auto player_info = xti::g_studiomodel->PlayerInfo( entity->index - 1 );
-				if ( !player_info || !player_info->name || std::strlen( player_info->name ) < 1 )
-					continue;
+			if ( cfg::get< bool >( vars.follow_important ) && !options::player_glue[ entity->index ] )
+				continue;
 
-				if ( std::strcmp( "guwi", player_info->name ) == 0 )
-					temp = entity;
-			}
-			else {
-				auto distance = xti::g_playermove->origin.distance_to( entity->curstate.origin ).length_sqrtf( );
-				if ( distance < max_distance ) {
-					max_distance = distance;
-					temp = entity;
-				};
+			auto distance = xti::g_playermove->origin.distance_to( entity->curstate.origin ).length_sqrtf( );
+			if ( distance < max_distance ) {
+				max_distance = distance;
+				temp = entity;
 			};
 		};
 
@@ -1149,6 +1142,60 @@ namespace createmove {
 		if ( std::strstr( viewmodel_model->name, "v_gauss.mdl" ) ) {
 			m_cmd->viewangles.y += m_flDelta;
 		};
+	};
+
+	void on_cmd_fastrun( sdk::c_user_cmd* m_cmd ) {
+		if ( !cfg::get< bool >( vars.fastrun ) )
+			return;
+
+		if ( !( m_cmd->buttons & ( sdk::in_forward | sdk::in_back | sdk::in_move_left | sdk::in_move_right ) ) )
+			return;
+
+		if ( !( xti::g_playermove->flags & FL_ONGROUND ) )
+			return;
+
+		if ( !xti::g_playermove )
+			return;
+
+
+		static bool run = false;
+		//if ( m_cmd->buttons & ( sdk::in_forward | sdk::in_back ) ) {
+		//	run ? m_cmd->sidemove -= xti::g_playermove->clientmaxspeed : m_cmd->sidemove += xti::g_playermove->clientmaxspeed;
+		//}
+		//if ( m_cmd->buttons & ( sdk::in_move_right | sdk::in_move_left ) ) {
+		//	run ? m_cmd->forwardmove -= xti::g_playermove->clientmaxspeed : m_cmd->forwardmove += xti::g_playermove->clientmaxspeed;
+		//}
+
+		auto player_velocity = xti::g_playermove->velocity.length_sqrtf( );
+		if ( player_velocity <= 100.0f )
+			return;
+
+		if ( ( m_cmd->buttons & sdk::in_forward && m_cmd->buttons & sdk::in_move_left ) || ( m_cmd->buttons & sdk::in_forward && m_cmd->buttons & sdk::in_move_right ) ) { // FORWARD + RIGHT
+
+			if ( m_cmd->buttons & sdk::in_move_right )
+				run ? m_cmd->sidemove += xti::g_playermove->clientmaxspeed : m_cmd->sidemove -= xti::g_playermove->clientmaxspeed;
+			else if ( m_cmd->buttons & sdk::in_move_left )
+				run ? m_cmd->sidemove -= xti::g_playermove->clientmaxspeed : m_cmd->sidemove += xti::g_playermove->clientmaxspeed;
+			run ? m_cmd->forwardmove -= xti::g_playermove->clientmaxspeed : m_cmd->forwardmove += xti::g_playermove->clientmaxspeed;
+		}
+		else if ( ( m_cmd->buttons & sdk::in_back && m_cmd->buttons & sdk::in_move_left ) || ( m_cmd->buttons & sdk::in_back && m_cmd->buttons & sdk::in_move_right ) ) {
+			if ( m_cmd->buttons & sdk::in_move_right ) {
+				run ? m_cmd->sidemove -= xti::g_playermove->clientmaxspeed : m_cmd->sidemove += xti::g_playermove->clientmaxspeed;
+				run ? m_cmd->forwardmove -= xti::g_playermove->clientmaxspeed : m_cmd->forwardmove += xti::g_playermove->clientmaxspeed;
+			}
+			else if ( m_cmd->buttons & sdk::in_move_left ) {
+				run ? m_cmd->sidemove += xti::g_playermove->clientmaxspeed : m_cmd->sidemove -= xti::g_playermove->clientmaxspeed;
+				run ? m_cmd->forwardmove -= xti::g_playermove->clientmaxspeed : m_cmd->forwardmove += xti::g_playermove->clientmaxspeed;
+			}
+		}
+		else if ( m_cmd->buttons & ( sdk::in_forward | sdk::in_back ) ) {
+			run ? m_cmd->sidemove += xti::g_playermove->clientmaxspeed : m_cmd->sidemove -= xti::g_playermove->clientmaxspeed;
+		}
+		else if ( m_cmd->buttons & ( sdk::in_move_left | sdk::in_move_right ) ) {
+			run ? m_cmd->forwardmove += xti::g_playermove->clientmaxspeed : m_cmd->forwardmove -= xti::g_playermove->clientmaxspeed;
+		}
+
+		run = !run;
 	};
 
 	int m_fakelag_interval = 0;

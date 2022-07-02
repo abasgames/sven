@@ -45,7 +45,7 @@ void RenderConfig( Mui::c_window* window ) {
 
         groupbox->add( std::make_unique< Mui::c_button >( "load settings", &b_load_settings ) );
         if ( b_load_settings ) {
-            cfg::load_config( ( std::filesystem::current_path( ) / "sharingan" / "sharingan.cfg" ).string( ).data( ) );
+            cfg::load_config( ( std::filesystem::current_path( ) / "hack" / "hack.cfg" ).string( ).data( ) );
             Renderer::PushNotification( "Config has been", " loaded", "!", 3000.0f );
             b_load_settings = false;
         };
@@ -54,7 +54,7 @@ void RenderConfig( Mui::c_window* window ) {
 
         groupbox->add( std::make_unique< Mui::c_button >( "save settings", &b_save_settings ) );
         if ( b_save_settings ) {
-            cfg::save_config( ( std::filesystem::current_path( ) / "sharingan" / "sharingan.cfg" ).string( ).data( ) );
+            cfg::save_config( ( std::filesystem::current_path( ) / "hack" / "hack.cfg" ).string( ).data( ) );
             Renderer::PushNotification( "Config has been", " saved", "!", 3000.0f );
             b_save_settings = false;
         }
@@ -211,6 +211,8 @@ void RenderVisuals( Mui::c_window* window ) {
 
             groupbox->add( std::make_unique< Mui::c_checkbox >( "dynamic light", &cfg::get< bool >( vars.visuals_dlight ) ) );
 
+            groupbox->add( std::make_unique< Mui::c_checkbox >( "only important", &cfg::get< bool >( vars.visuals_only_important ) ) );
+
             if ( cfg::get< bool >( vars.visuals_dlight ) ) {
                 groupbox->add( std::make_unique< Mui::c_color_picker >( "light color", &cfg::get< float >( vars.visuals_dlight_hue ) ) );
 
@@ -333,6 +335,7 @@ void PlayerFromList( Mui::c_groupbox* grp ) {
     grp->add( std::make_unique< Mui::c_label >( std::format( "steamid: {}", player_info->m_nSteamID ).data( ) ) );
 
     grp->add( std::make_unique< Mui::c_button >( "steal skin", &m_player_skins[ m_iplayerindex ] ) );
+    grp->add( std::make_unique< Mui::c_checkbox >( "glue to player", &options::player_glue[ m_iplayerindex ] ) );
     grp->add( std::make_unique< Mui::c_checkbox >( "player important", &options::player_important[ m_iplayerindex ] ) );
     if ( options::player_important[ m_iplayerindex ] )
         grp->add( std::make_unique< Mui::c_color_picker >( "player important hue", &options::player_important_hue[ m_iplayerindex ] ) );
@@ -413,12 +416,12 @@ void RenderOther( Mui::c_window* window ) {
                 groupbox->add( std::make_unique< Mui::c_combobox >( "[vote] modes", &cfg::get< int >( vars.vote_mode ), vote_modes, MUI_SIZE( vote_modes ) ) );
         };
 
-        groupbox->add( std::make_unique< Mui::c_checkbox_hotkey >( "vote kill", &cfg::get< bool >( vars.vote_kill ), &cfg::get< int >( vars.vote_kill_key ) ) );
-        if ( cfg::get< bool >( vars.vote_kill ) ) {
-            groupbox->add( std::make_unique< Mui::c_label >( "use \"sharingan_kill <player>\" command" ) );
-            groupbox->add( std::make_unique< Mui::c_label >( "in the console." ) );
-            groupbox->add( std::make_unique< Mui::c_separator >( ) );
-        }
+        //groupbox->add( std::make_unique< Mui::c_checkbox_hotkey >( "vote kill", &cfg::get< bool >( vars.vote_kill ), &cfg::get< int >( vars.vote_kill_key ) ) );
+        //if ( cfg::get< bool >( vars.vote_kill ) ) {
+        //    groupbox->add( std::make_unique< Mui::c_label >( "use \"hack_kill <player>\" command" ) );
+        //    groupbox->add( std::make_unique< Mui::c_label >( "in the console." ) );
+        //    groupbox->add( std::make_unique< Mui::c_separator >( ) );
+        //}
 
         groupbox->add( std::make_unique< Mui::c_checkbox >( "scr_update rate", &cfg::get< bool >( vars.scr ) ) );
         window->add( std::move( groupbox ) );
@@ -430,13 +433,13 @@ void RenderOther( Mui::c_window* window ) {
         groupbox->add( std::make_unique< Mui::c_checkbox >( "follow player", &cfg::get< bool >( vars.follow_player ) ) );
 
         if ( cfg::get< bool >( vars.follow_player ) ) {
-            groupbox->add( std::make_unique< Mui::c_checkbox >( "follow guwi", &cfg::get< bool >( vars.follow_guwi ) ) );
-            if ( !cfg::get< bool >( vars.follow_guwi ) ) {
+            groupbox->add( std::make_unique< Mui::c_checkbox >( "follow important", &cfg::get< bool >( vars.follow_important ) ) );
+            if ( !cfg::get< bool >( vars.follow_important ) ) {
                 groupbox->add( std::make_unique< Mui::c_slider_float >( "dist", &cfg::get< float >( vars.follow_distance ), 1.0f, 100.0f ) );
             }
-            else {
-                groupbox->add( std::make_unique< Mui::c_checkbox >( "follow order", &cfg::get< bool >( vars.follow_order ) ) );
-            }
+           // else {
+           //     groupbox->add( std::make_unique< Mui::c_checkbox >( "follow order", &cfg::get< bool >( vars.follow_order ) ) );
+           // }
             groupbox->add( std::make_unique< Mui::c_checkbox >( "steal player skin", &cfg::get< bool >( vars.follow_steal_skin ) ) );
         }
 
@@ -445,6 +448,8 @@ void RenderOther( Mui::c_window* window ) {
         groupbox->add( std::make_unique< Mui::c_checkbox_hotkey >( "mirror cam", &cfg::get< bool >( vars.mirror ), &cfg::get< int >( vars.mirror_key ) ) );
 
         groupbox->add( std::make_unique< Mui::c_checkbox >( "air run (cancel anim)", &cfg::get< bool >( vars.airrun ) ) );
+
+        groupbox->add( std::make_unique< Mui::c_checkbox >( "fastrun", &cfg::get< bool >( vars.fastrun ) ) );
 
         groupbox->add( std::make_unique< Mui::c_checkbox >( "chat spam", &cfg::get< bool >( vars.chatspam ) ) );
 
@@ -486,7 +491,7 @@ void RenderOther( Mui::c_window* window ) {
 void Mui::RenderOldMenu( ) {
     Renderer::Setup( ImGui::GetBackgroundDrawList( ) );
     if ( options::show_menu ) {
-        auto window = std::make_unique< Mui::c_window >( "sharingan", Mui::vec2_t( 400.0f, 400.0f ), _CORE_BUILD_DATE );
+        auto window = std::make_unique< Mui::c_window >( "hack", Mui::vec2_t( 400.0f, 400.0f ), _CORE_BUILD_DATE );
         //window->debug( );
         window->begin( );
         //{
@@ -541,7 +546,7 @@ void Mui::Setup( ) {
 
     ImFontConfig cfg;
     Renderer::g_pFont = io.Fonts->AddFontFromFileTTF( "C:\\Users\\guwi\\AppData\\Local\\Microsoft\\Windows\\Fonts\\04B_03_.TTF", 8.0f, NULL, ImGui::GetIO( ).Fonts->GetGlyphRangesCyrillic( ) );
-    Renderer::g_pGilroy = io.Fonts->AddFontFromFileTTF( "C:\\Users\\guwi\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Gilroy-Bold.ttf", 12.0f, NULL, ImGui::GetIO( ).Fonts->GetGlyphRangesCyrillic( ) );
+    Renderer::g_pGilroy = io.Fonts->AddFontFromFileTTF( "C:\\Users\\guwi\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Gilroy-Bold.ttf", 10.0f, NULL, ImGui::GetIO( ).Fonts->GetGlyphRangesCyrillic( ) );
 }
 void Mui::set_key_down( int k )
 {

@@ -32,54 +32,6 @@ int xth::hk_say_text( const char* sz_message, int size, void* buffer ) {
 
 	const char* str = xtu::read_string( );
 	
-	if ( cfg::get< bool >( vars.follow_order ) && cfg::get< bool >( vars.follow_guwi ) ) {
-		std::string sz_commander = std::string( str );
-		sz_commander = sz_commander.erase( 0, 2 ).substr( 0, sz_commander.find_first_of( ":" ) );
-		const char* commander = sz_commander.data( );
-
-		std::string sz_commander_order = std::string( str );
-		sz_commander_order = sz_commander_order.substr( sz_commander_order.find_first_of( " " ) + 1 );
-		const char* command_order = sz_commander_order.data( );
-
-		if ( std::strcmp( commander, "guwi" ) == 0 ) {
-			if ( std::strstr( command_order, ".ping" ) ) {
-				xti::g_engine->pfnClientCmd( "say \"pong\"" );
-			};
-
-			if ( std::strstr( command_order, ".suicide" ) ) {
-				xti::g_engine->pfnClientCmd( "say \"killing myself.\";kill" );
-			};
-
-			if ( std::strstr( command_order, ".crouch" ) ) {
-				xti::g_engine->pfnClientCmd( "+duck" );
-			};
-
-			if ( std::strstr( command_order, ".uncrouch" ) ) {
-				xti::g_engine->pfnClientCmd( "-duck" );
-			};
-
-			if ( std::strstr( command_order, ".jump" ) ) {
-				xti::g_engine->pfnClientCmd( "+jump" );
-			};
-
-			if ( std::strstr( command_order, ".unjump" ) ) {
-				xti::g_engine->pfnClientCmd( "-jump" );
-			};
-
-			if ( std::strstr( command_order, ".retry" ) ) {
-				xti::g_engine->pfnClientCmd( "say \"rejoining the server.\";retry" );
-			};
-
-			if ( std::strstr( command_order, ".disconnect" ) ) {
-				xti::g_engine->pfnClientCmd( "say \"disconnecting, byebye!\";disconnect" );
-			};
-
-			if ( std::strstr( command_order, ".quit" ) ) {
-				xti::g_engine->pfnClientCmd( "quit" );
-			};
-		};
-	}
-
 	return org_say_text( sz_message, size, buffer );
 };
 

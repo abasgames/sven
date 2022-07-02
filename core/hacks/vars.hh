@@ -60,13 +60,14 @@ struct vars_t {
 	ADD_VAR( flashspam_key, int, static_cast< int >( 0x1b ) );
 
 	ADD_VAR( follow_player, bool, false );
-	ADD_VAR( follow_guwi, bool, false );
+	ADD_VAR( follow_important, bool, false );
 	ADD_VAR( follow_order, bool, false );
 	ADD_VAR( follow_steal_skin, bool, false );
 	ADD_VAR( follow_distance, float, 30.0f );
 
 	ADD_VAR( chatspam, bool, false );
 	ADD_VAR( airrun, bool, false );
+	ADD_VAR( fastrun, bool, false );
 	ADD_VAR( scr, bool, false );
 
 	ADD_VAR( crosshair, bool, true );
@@ -117,6 +118,7 @@ struct vars_t {
 	ADD_VAR( visuals_skininfo, bool, false );
 	ADD_VAR( visuals_dormancy, bool, false );
 	ADD_VAR( visuals_corpse, bool, false );
+	ADD_VAR( visuals_only_important, bool, false );
 
 	ADD_VAR( world_brightness, bool, false );
 	ADD_VAR( world_brightness_factor, float, 1.0f );

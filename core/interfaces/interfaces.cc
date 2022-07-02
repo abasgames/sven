@@ -2,7 +2,7 @@
 #include <string_view>
 #include <format>
 #include "interfaces.hh"
-
+#include <filesystem>
 #include <utils/utils.hh>
 //#pragma comment(lib, "winmm.lib")
 //#include <../vendor/tamashi/tamashi.hh>
@@ -112,9 +112,41 @@ void xti::setup_interfaces( ) {
 
 	xti::g_usermsghook				= dw_hookmsg.at< std::uintptr_t >( );
 
-	xtu::console_color_printf( { 255, 0, 0, 255 }, "[sharingan] " );
-	xtu::console_color_printf( { 200, 200, 200, 255 }, "version: %s\n", _CORE_STRING );
+	xtu::console_color_printf( { 210, 160, 210, 255 }, "[hack] " );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "version: %s\n", _CORE_STRING );
 
+	xtu::console_color_printf( { 210, 160, 210, 255 }, "================ NEXT UPDATE ================\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§1) Fastrun / Fastmove. Making you run faster, using ground strafe mechanics.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§2) Rainbow color model. Basically changes the top & bottomcolor of your model and cycles through a hue spectrum.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§3) Freecam.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§4) Spycam. Go to any spot on the map, place a camera and access that camera at any point.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§5) Push Notifications. Yes i know, this exists as of now. But in the next you'll be able to turn it off.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§6) Better vote handling. Do things when vote is against YOU, Important person, etc..\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§7) Change hotkey modes. Being able to select wether an option should be held or toggle'able.\n\n" );
+
+	xtu::console_color_printf( { 210, 160, 210, 255 }, "================ MAYBE IN THE NEXT UPDATE ================\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§1) Perfect circle strafer. Traces the environment, and proceeds to QUAKE strafe in a circle, avoiding obstacles.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§2) Better way of handling tickbase manipulation.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§3) Fake ping.\n\n" );
+
+	xtu::console_color_printf( { 210, 160, 210, 255 }, "================ KNOWN BUGS ================\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§1) Hotkey's sometimes stop responding to new keybind, meaning you can't rebind. (Working on it)\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§2) There's no way of selecting wether a key should be hold or toggle, (Working on it)\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§3) Color picker missing saturation & value sliders (Working on it)\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§4) Votekill isn't working / it's disabled. (Yes, im working on fixing it. It had some issues)\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§5) Tickbase manipulation stops the user, but flie's forward when autostrafing (Working on a fix for that too.)\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§6) WASD AFK Method keeps jumping in water, even when player not afk. (Yes, and i'm working on it, this is not prio.)\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§7) When marking a player important, the text for steamid glitches. This is due to formating issues.\n\n" );
+
+	xtu::console_color_printf( { 210, 160, 210, 255 }, "================ THINGS I WONT ADD ================\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§1) Console commands. The reason is that there's no way of deleting a command when unloading the cheat.\n   So it will cause a crash.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§2) Any exploits that's gamebreaking, anything that destroy's anyone else's experience will NOT be added.\n   Such things are not tolerated.\n\n" );
+	
+	xtu::console_color_printf( { 210, 160, 210, 255 }, "================ THINGS I MAY CONSIDER IN THE FUTURE ================\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§1) Adding a scripting language. Making users able to code their own plugins for this cheat. And\n   being able to load it in at any time. [LUA/CHAISCRIPT]\n\n" );
+	
+	xtu::console_color_printf( { 210, 160, 210, 255 }, "[hack] " );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "config save path: %s\n", ( std::filesystem::current_path( ) / "hack" ).string( ).data( ) );
 	//PlaySoundA( ( char* )tamashi, NULL, SND_MEMORY | SND_SYNC );
 
 	//xti::g_engine->Con_Printf( "// == // == // == // == // == // == // == // == // == // == //\n" );

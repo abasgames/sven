@@ -322,7 +322,7 @@ void xtu::buffered_localise_text_string( const char* msg ) {
 	if ( !org )
 		return;
 
-	xti::g_engine->Con_Printf( "[sharingan] sent %s -> 0x%X, got [%s]\n", msg, org( msg ), org( msg ) );
+	xti::g_engine->Con_Printf( "[hack] sent %s -> 0x%X, got [%s]\n", msg, org( msg ), org( msg ) );
 };
 
 int xtu::insert_color_change( DWORD* ecx, int a2 ) // 55 8B EC 8B 91 ? ? ? ? 83 EC 10 8B 45 08 C1 E2 04 03 91

@@ -8,10 +8,10 @@
 #include <filesystem>
 
 auto main_instance( void* instance ) {
-	if ( std::filesystem::create_directory( "sharingan" ) )
-		cfg::save_config( ( std::filesystem::current_path( ) / "sharingan" / "sharingan.cfg" ).string( ).data( ) );
+	if ( std::filesystem::create_directory( "hack" ) )
+		cfg::save_config( ( std::filesystem::current_path( ) / "hack" / "hack.cfg" ).string( ).data( ) );
 	else
-		cfg::load_config( ( std::filesystem::current_path( ) / "sharingan" / "sharingan.cfg" ).string( ).data( ) );
+		cfg::load_config( ( std::filesystem::current_path( ) / "hack" / "hack.cfg" ).string( ).data( ) );
 	xti::setup_interfaces( );
 	xth::setup_hooks( );
 

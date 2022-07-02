@@ -1,8 +1,8 @@
 #pragma once
-#define _CORE_VERSION "0.9.7"
-#define _CORE_STRING "svencoop - " _CORE_VERSION
-#define _CORE_BUILD_DATE __TIME__ " @ " __DATE__
-#define _CORE_VERSION_DEF "[SHARINGAN]"
+#define _CORE_VERSION "0.7.0-b"
+#define _CORE_STRING "hack - " _CORE_VERSION
+#define _CORE_BUILD_DATE _CORE_VERSION " :: " __TIME__ " @ " __DATE__
+#define _CORE_VERSION_DEF "[HACK]"
 
 #include <sdk/c_base_interface.hh>
 #include <sdk/c_color32.hh>

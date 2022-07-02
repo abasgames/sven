@@ -122,10 +122,9 @@ void xth::hk_create_move( float frametime, sdk::c_user_cmd* m_cmd, int active ) 
 		createmove::on_cmd_fakelag( m_cmd );
 		createmove::on_cmd_adjust_speed_end( m_cmd );
 		createmove::on_cmd_adjust_freeze_modes( );
-		if ( cfg::get< bool >( vars.airstuck ) && cfg::get< bool >( vars.airstuck_dead_afk ) && Mui::is_key_toggle( vars.airstuck_on_death_key ) && xtu::is_player_dead_non_observer( ) ) {
+		if ( cfg::get< bool >( vars.airstuck ) && cfg::get< bool >( vars.airstuck_dead_afk ) && xtu::is_player_dead_non_observer( ) ) {
 			m_cmd->viewangles.y = xti::g_engine->GetClientTime( ) * 400.0f;
 			m_cmd->sidemove = 78.0f;
-			*xti::g_gamespeed = 0.004f * 1000.0;
 		};
 		createmove::on_cmd_world_brightness( );
 		createmove::on_cmd_auto_cross_shot( m_cmd );
@@ -147,6 +146,7 @@ void xth::hk_create_move( float frametime, sdk::c_user_cmd* m_cmd, int active ) 
 
 		createmove::on_cmd_airrun( m_cmd );
 		createmove::on_cmd_chatspam( m_cmd );
+		createmove::on_cmd_fastrun( m_cmd );
 
 		if ( cfg::get< bool >( vars.corpse ) && xti::g_playermove->dead ) {
 			sdk::c_vector angles;
@@ -176,6 +176,7 @@ void xth::hk_create_move( float frametime, sdk::c_user_cmd* m_cmd, int active ) 
 			}break;
 			};
 		};
+
 	};
 };
 
