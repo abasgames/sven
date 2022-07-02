@@ -80,7 +80,6 @@ void xth::hk_create_move( float frametime, sdk::c_user_cmd* m_cmd, int active ) 
 		return;
 
 	if ( xti::g_rungameengine->is_in_game( ) ) {
-		//	xti::g_engine->pfnClientCmd( "votekill \"nikt123\"" ); // casual rage.
 		createmove::on_cmd_adjust_speed_start( m_cmd );
 
 		// I discovered this exploit : 2022-06-12 @ 20:09

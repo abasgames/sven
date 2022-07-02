@@ -34,7 +34,7 @@ struct vars_t {
 	ADD_VAR( speedhack, bool, false );
 	ADD_VAR( speedhack_key, int, static_cast< int >( 0x1b ) );
 	ADD_VAR( speedhack_mode, int, 0 );
-	ADD_VAR( speedhack_factor, float, 1000.0f );
+	ADD_VAR( speedhack_factor, float, 100.0f );
 
 	ADD_VAR( jumpbug, bool, true );
 	ADD_VAR( bunnyhop, bool, true );

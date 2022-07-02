@@ -324,7 +324,7 @@ namespace Mui {
             pval = value;
             szdelim = delim;
             slider_pad_y = 10.0f;
-
+            *pval = std::clamp( *pval, vmin, vmax );
             children[ childname ].control = this;
         };
 
@@ -351,6 +351,7 @@ namespace Mui {
                 Renderer::AddRectFilled( { position.x, position.y + slider_pad_y }, { temp_val * ( ( float )size.x / vmax ), size.y }, menucolor_darken );
             }
             Renderer::AddRectFilled( { position.x, position.y + slider_pad_y }, { *pval * ( ( float )size.x / vmax ), size.y }, menucolor );
+
             //Renderer::AddRect( { position.x, position.y + slider_pad_y }, { size.x, size.y }, ImColor( 9, 10, 12, 255 ) );
         };
 
@@ -534,6 +535,7 @@ namespace Mui {
             pval = value;
             szdelim = delim;
             slider_pad_y = 10.0f;
+            *pval = std::clamp( *pval, vmin, vmax );
             children[ childname ].control = this;
         };
 
