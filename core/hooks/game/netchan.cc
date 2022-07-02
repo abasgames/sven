@@ -6,6 +6,7 @@
 #include <hacks/features.hh>
 #include <hacks/vars.hh>
 #include <interfaces/interfaces.hh>
+#include <utils/hash.hh>
 
 xth::fn_netchan_can_packet org_netchan_can_packet = nullptr;
 xth::fn_netchan_transmit org_netchan_transmit = nullptr;
@@ -91,7 +92,6 @@ bool xth::hk_netchan_process( sdk::netchan_t* chan ) {
 	return org_netchan_process( chan );
 };
 
-#include <utils/hash.hh>
 
 void xth::netchan::hook( ) {
 	// Netchan_Transmit

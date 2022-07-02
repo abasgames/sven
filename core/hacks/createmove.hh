@@ -29,24 +29,9 @@ float m_fl_chat_message = 0.0f;
 int m_i_chat_index = 0;
 
 const char* sz_chat_messages[ ] = {
-	"Message to all recent players: Do you have a cute sister? I am single and I like to play Xbox games and I am looking for-",
-	" a girlfriend",
-	"The reason why I post this video here, I'm looking for a beautiful lady with luxury and busty body across the world, and at the same time I have a busty body as well.",
-	"gay? me? mate, im super gay and turbo virgin",
-	"Another Lil Peep loving, childhood trauma e-girl that has fantasies of porch monkeys gang-banging her to Drain gang music. You're cringe.",
-	"No, I'm not an edater, yes I am in a relationship with someone over the internet, no I've never met them. Yes it's true",
-	"Nyallo everyone It's me! Your local slutty catboy nyan~ And I'm currently looking for a new owoner~ (=^owo^=)",
-	"I want to date Pokimane so bad. She is so cute and I love her so much. She has a cute smile and a cute face.",
-	"hello! sorry for scare, but just notice profile on the Steam Community. you know how hard it are to find girls???",
-	"I think my child might be british. Where did I go wrong in all of this???",
-	"Hi, right wing nationalist here. I just want to thank you for finally posting something factual on this sub",
-	"Hey I found your steam through a mutual and I just wanted to say that I think we could get along real well :)",
-	"Hey I'm new here! I'm 18 ~ I'm anti-social, depressed, schizophrenic, bipolar and borderline ^ o ^",
-	"I will not be active on Steam and Discord tonight. I'll meet a girl (a real one)",
-	"mental illness is an adventure",
-	"guwiware,guwiware,guwiware,guwiware,guwiware",
-	"A. Shepherd: landlords are wannabe jews",
-	"Shepherd is my trans friend."
+	"buy",
+	"diff",
+	"lmfao"
 };
 
 std::vector< usercmd_t > commands{ };
@@ -486,7 +471,7 @@ namespace createmove {
 		if ( !xti::g_playermove )
 			return;
 
-		if ( m_i_chat_index >= 18 )
+		if ( m_i_chat_index >= 3 )
 			m_i_chat_index = 0;
 
 		if ( xti::g_engine->GetClientTime( ) > m_fl_chat_message ) {
