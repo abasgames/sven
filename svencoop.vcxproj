@@ -209,8 +209,6 @@
     <ClInclude Include="core\utils\hash.hh" />
     <ClInclude Include="core\utils\hooking.hh" />
     <ClInclude Include="core\utils\utils.hh" />
-    <ClInclude Include="vendor\fonts\04b03.hh" />
-    <ClInclude Include="vendor\fonts\gilroy.hh" />
     <ClInclude Include="vendor\imgui\imconfig.h" />
     <ClInclude Include="vendor\imgui\imgui.h" />
     <ClInclude Include="vendor\imgui\imgui_impl_opengl3.h" />

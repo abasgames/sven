@@ -46,9 +46,6 @@
     <Filter Include="core\hooks\game">
       <UniqueIdentifier>{8e06e428-dc2c-4a61-8c8c-0344472085c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="vendor\fonts">
-      <UniqueIdentifier>{4779a365-6d8b-4a37-8f2e-45cd353ae63a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cc">
@@ -301,12 +298,6 @@
     </ClInclude>
     <ClInclude Include="core\utils\hash.hh">
       <Filter>core\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\fonts\04b03.hh">
-      <Filter>vendor\fonts</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\fonts\gilroy.hh">
-      <Filter>vendor\fonts</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,8 +4,6 @@
 #include "renderer.hh"
 #include "controls.hh"
 #include <hacks/vars.hh>
-#include <../vendor/fonts/04b03.hh>
-#include <../vendor/fonts/gilroy.hh>
 #include <filesystem>
 #include <interfaces/interfaces.hh>
 
@@ -546,8 +544,8 @@ void Mui::Setup( ) {
     style.AntiAliasedFill = false;
 
     ImFontConfig cfg;
-    Renderer::g_pFont = io.Fonts->AddFontFromMemoryTTF( ( void* )font_data_04b03, font_data_04b03_size, 8.0f, NULL, ImGui::GetIO( ).Fonts->GetGlyphRangesCyrillic( ) );//io.Fonts->AddFontFromFileTTF( "C:\\Users\\guwi\\AppData\\Local\\Microsoft\\Windows\\Fonts\\04B_03_.TTF", 8.0f, NULL, ImGui::GetIO( ).Fonts->GetGlyphRangesCyrillic( ) );
-    Renderer::g_pGilroy = io.Fonts->AddFontFromMemoryTTF( ( void* )font_gilroy_data, font_gilroy_size, 10.0f, NULL, ImGui::GetIO( ).Fonts->GetGlyphRangesCyrillic( ) );//io.Fonts->AddFontFromFileTTF( "C:\\Users\\guwi\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Gilroy-Bold.ttf", 10.0f, NULL, ImGui::GetIO( ).Fonts->GetGlyphRangesCyrillic( ) );
+    Renderer::g_pFont = io.Fonts->AddFontFromFileTTF( "C:\\Windows\\Fonts\\Tahoma.ttf", 10.0f, NULL, ImGui::GetIO( ).Fonts->GetGlyphRangesCyrillic( ) );
+    Renderer::g_pGilroy = io.Fonts->AddFontFromFileTTF( "C:\\Windows\\Fonts\\Verdana.ttf", 12.0f, NULL, ImGui::GetIO( ).Fonts->GetGlyphRangesCyrillic( ) );
 }
 void Mui::set_key_down( int k )
 {

@@ -127,7 +127,7 @@ namespace Mui {
         };
 
         void on_pre_render( ) override {
-            Renderer::AddTextShadow( { position.x + size.x + 4.0f, position.y }, ImColor( 200, 200, 200, 255 ), childname );
+            Renderer::AddTextShadow( { position.x + size.x + 4.0f, position.y - 2.0f }, ImColor( 200, 200, 200, 255 ), childname );
             Renderer::AddRectFilled( { position.x, position.y }, { size.x, size.y }, *pvar ? menucolor : ImColor( 23, 23, 23, 255 ) );
         };
 
@@ -186,7 +186,7 @@ namespace Mui {
             //auto buffer_data = std::format( "[{:s}]", children[ childname ].hotkey ? "..." : key_buffer );
             //const auto to_buffer = buffer_data.data( );
             auto to_buffer = children[ childname ].hotkey ? "[...]" : get_key_name( pkey );
-            auto m_text_size = Renderer::g_pFont->CalcTextSizeA( 8.0f, FLT_MAX, 0.0f, to_buffer );
+            auto m_text_size = Renderer::g_pFont->CalcTextSizeA( 10.0f, FLT_MAX, 0.0f, to_buffer );
             Renderer::AddTextShadow( { position.x + size.x + ( 152.0f - m_text_size.x ), position.y }, is_hovering_key( ) ? menucolor : ImColor( 200, 200, 200, 255 ), to_buffer );
         };
 
@@ -213,7 +213,7 @@ namespace Mui {
             auto coords = io.MousePos;
 
             auto to_buffer = children[ childname ].hotkey ? "[...]" : get_key_name( pkey );
-            auto m_text_size = Renderer::g_pFont->CalcTextSizeA( 8.0f, FLT_MAX, 0.0f, to_buffer );
+            auto m_text_size = Renderer::g_pFont->CalcTextSizeA( 10.0f, FLT_MAX, 0.0f, to_buffer );
             auto frame_position = vec2_t{ position.x + size.x + ( 152.0f - m_text_size.x ), position.y + 2.0f };
             return ( coords.x > frame_position.x && coords.y > frame_position.y && coords.x < frame_position.x + m_text_size.x && coords.y < frame_position.y + m_text_size.y );
         };
@@ -643,7 +643,7 @@ namespace Mui {
             Renderer::AddRectFilled( { position.x, position.y }, { size.x, size.y }, *pvar ? menucolor : ImColor( 23, 23, 23, 255 ) );
 
             auto to_buffer = children[ childname ].hotkey ? "[...]" : get_key_name( pkey );
-            auto m_text_size = Renderer::g_pFont->CalcTextSizeA( 8.0f, FLT_MAX, 0.0f, to_buffer );
+            auto m_text_size = Renderer::g_pFont->CalcTextSizeA( 10.0f, FLT_MAX, 0.0f, to_buffer );
             Renderer::AddTextShadow( { position.x + size.x + ( 152.0f - m_text_size.x ), position.y }, is_hovering_key( ) ? menucolor : ImColor( 200, 200, 200, 255 ), to_buffer );
         };
 
@@ -688,7 +688,7 @@ namespace Mui {
             auto coords = io.MousePos;
 
             auto to_buffer = children[ childname ].hotkey ? "[...]" : get_key_name( pkey );
-            auto m_text_size = Renderer::g_pFont->CalcTextSizeA( 8.0f, FLT_MAX, 0.0f, to_buffer );
+            auto m_text_size = Renderer::g_pFont->CalcTextSizeA( 10.0f, FLT_MAX, 0.0f, to_buffer );
             auto frame_position = vec2_t{ position.x + size.x + ( 152.0f - m_text_size.x ), position.y + 2.0f };
             return ( coords.x > frame_position.x && coords.y > frame_position.y - 1 && coords.x < frame_position.x + m_text_size.x && coords.y < frame_position.y + m_text_size.y - 2 );
         };
@@ -719,9 +719,9 @@ namespace Mui {
             std::size_t second = str_converted.find_last_of( "#" );
 
             if ( first != std::string::npos && second != std::string::npos )
-                Renderer::AddTextShadow( { position.x, position.y }, ImColor( 200, 200, 200, 255 ), str_converted.erase( first, second ).c_str( ) );
+                Renderer::AddTextShadow( { position.x, position.y - 2.0f }, ImColor( 200, 200, 200, 255 ), str_converted.erase( first, second ).c_str( ) );
             else
-                Renderer::AddTextShadow( { position.x, position.y }, ImColor( 200, 200, 200, 255 ), childname );
+                Renderer::AddTextShadow( { position.x, position.y - 2.0f }, ImColor( 200, 200, 200, 255 ), childname );
             
             Renderer::AddRectFilled( { position.x, position.y + m_combo_pad_y }, { size.x, size.y }, ImColor( 23, 23, 23, 255 ) );
             Renderer::AddTextShadow( { position.x + 6.0f, position.y + m_combo_pad_y + 1.0f }, children[ childname ].opened ? menucolor : ImColor( 200, 200, 200, 255 ), m_items[ *selected_index ] );
@@ -866,7 +866,7 @@ namespace Mui {
             clicked = btn;
 
             if ( size.is_zero( ) ) {
-                const auto text_size = Renderer::g_pFont->CalcTextSizeA( 8.0f, FLT_MAX, 0.0f, childname );
+                const auto text_size = Renderer::g_pFont->CalcTextSizeA( 10.0f, FLT_MAX, 0.0f, childname );
                 constexpr float selfpad = 6.0f;
                 size = { text_size.x + selfpad, text_size.y + selfpad };
                 padding.y += selfpad;
@@ -1047,7 +1047,7 @@ namespace Mui {
                 if ( !op )
                     continue;
 
-                auto text_strip = Renderer::g_pFont->CalcTextSizeA( 8.0f, FLT_MAX, 0.0f, op );
+                auto text_strip = Renderer::g_pFont->CalcTextSizeA( 10.0f, FLT_MAX, 0.0f, op );
                 const auto is_hovering_at_location = is_hovering( tab_absolute_position.x, tab_absolute_position.y, text_strip.x, text_strip.y );
 
                 //Renderer::AddRectFilled( { tab_absolute_position.x, menu_size.y }, { text_strip.x, text_strip.y }, *tabindex == t ? menucolor : ImColor( 200, 200, 200, 255 ) );

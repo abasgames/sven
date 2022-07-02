@@ -7,19 +7,19 @@ namespace Renderer {
 
     void Setup( ImDrawList* drawlist );
 
-    void AddText( ImVec2 position, ImColor color, const char* text, bool center = false, ImFont* font = g_pFont, float font_size = 8.0f );
+    void AddText( ImVec2 position, ImColor color, const char* text, bool center = false, ImFont* font = g_pFont, float font_size = 10.0f );
 
     void AddRect( const ImVec2 position, const ImVec2 size, ImColor color );
 
     void AddRectFilled( const ImVec2 position, const ImVec2 size, ImColor color );
 
-    void AddTextOutline( ImVec2 position, ImColor color, const char* text, bool center = false, ImFont* font = g_pFont, float font_size = 8.0f );
+    void AddTextOutline( ImVec2 position, ImColor color, const char* text, bool center = false, ImFont* font = g_pFont, float font_size = 10.0f );
 
     void AddRectOutline( const ImVec2 position, const ImVec2 size, ImColor color );
 
     void AddLine( const ImVec2 pos0, const ImVec2 pos1, ImColor color );
 
-    void AddTextShadow( ImVec2 position, ImColor color, const char* text, bool center = false, ImFont* font = g_pFont, float font_size = 8.0f );
+    void AddTextShadow( ImVec2 position, ImColor color, const char* text, bool center = false, ImFont* font = g_pFont, float font_size = 10.0f );
 
     void AddMultiColor( const ImVec2 position, const ImVec2 size, ImColor color0, ImColor color1, ImColor color2, ImColor color3 );
 
