@@ -104,14 +104,7 @@ int __fastcall xth::hk_votepopup_msgfunc( sdk::c_vote_popup* vote, void* edx, co
 	xtu::begin_read( data, size );
 
 	if ( cfg::get< bool >( vars.autohomie ) ) {
-		// this will be a feature later on, the goal is to whitelist certain votes. and by whitelist, i mean to automatically vote no & tell the server to vote no aswell.
-		//auto str = xtu::read_string( );
-		//if ( std::strstr( str, "petrichor" ) || std::strstr( str, "Antonio Montana#StandWithRussia" ) || std::strstr( str, "Datus" ) || std::strstr( str, "A. Shepherd" )
-		//	|| std::strstr( str, "TechNoir" ) || std::strstr( str, "guwi" ) || std::strstr( str, "coffee" ) || std::strstr( str, "boyiori" ) || ( std::strcmp( str, "5" ) == 0 ) || 
-		//	std::strstr( str, "haxyie" ) || std::strstr( str, "danjii" ) )
-		//	xti::g_engine->pfnClientCmd( "say \"[auto-homie] homie detected, vote: press 2\"" );
-		//else
-		//	xti::g_engine->pfnClientCmd( "say \"[auto-homie] cant find homie. press 1\"" );
+		
 	};
 	org_votepopup_msgfunc( vote, panel_name, size, data );
 	return 1;

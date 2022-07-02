@@ -444,7 +444,7 @@ void RenderOther( Mui::c_window* window ) {
             groupbox->add( std::make_unique< Mui::c_checkbox >( "steal player skin", &cfg::get< bool >( vars.follow_steal_skin ) ) );
         }
 
-        groupbox->add( std::make_unique< Mui::c_checkbox >( "homie", &cfg::get< bool >( vars.autohomie ) ) );
+        //groupbox->add( std::make_unique< Mui::c_checkbox >( "homie", &cfg::get< bool >( vars.autohomie ) ) );
 
         groupbox->add( std::make_unique< Mui::c_checkbox_hotkey >( "mirror cam", &cfg::get< bool >( vars.mirror ), &cfg::get< int >( vars.mirror_key ) ) );
 
