@@ -50,6 +50,16 @@ namespace options {
 		airstuck_complete_freeze,
 		airstuck_process
 	};
+
+	//{ "fast", "super fast", "slow", "super slow", "factor", "fast & slow" };
+	enum speedhack_modes : int {
+		speed_fast,
+		speed_super_fast,
+		speed_slow,
+		speed_super_slow,
+		speed_factor,
+		speed_fast_slow
+	};
 	extern bool show_menu;
 	extern int show_menu_key;
 	extern int show_menu_tab;

@@ -25,6 +25,18 @@ namespace xti {
 	extern std::uintptr_t* g_playerextrainfo;
 	extern std::uintptr_t g_gameoverlayrenderer;
 	extern std::uintptr_t g_usermsghook;
+	extern std::uintptr_t g_gameroverlayrenderer_is_opened;
+
+	extern std::uintptr_t ut_unhook_func;
+	extern std::uintptr_t ut_beginread;
+	extern std::uintptr_t ut_readstr;
+	extern std::uintptr_t ut_readcoord;
+	extern std::uintptr_t ut_readshort;
+	extern std::uintptr_t ut_readbyte;
+	extern std::uintptr_t ut_mapname;
+	extern std::uintptr_t ut_buffered;
+	extern std::uintptr_t ut_insert_color_change;
+	extern std::uintptr_t ut_print_to_console;
 
 	void setup_interfaces( );
 };

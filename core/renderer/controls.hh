@@ -51,6 +51,12 @@ namespace Mui {
     const char* get_key_name( int* key ) {
 
         switch ( *key ) {
+        case VK_INSERT:
+            return "[INSERT]";
+        case VK_DELETE:
+            return "[DELETE]";
+        case VK_END:
+            return "[END";
         case VK_LBUTTON:
             return "[M1]";
         case VK_RBUTTON:
@@ -65,6 +71,9 @@ namespace Mui {
             return "[-]";
         case VK_SPACE:
             return "[SPACE]";
+        case 0x3A:
+        case 0x40:
+            return "[UNKNOWN KEY]";
         case VK_LSHIFT:
         case VK_RSHIFT:
         case VK_SHIFT:
@@ -76,7 +85,7 @@ namespace Mui {
             char key_buffer[ 256 ];
             GetKeyNameTextA( lParamValue, key_buffer, sizeof( key_buffer ) );
 
-            return std::format( "[{:s}]", key_buffer ).c_str( );
+            return std::format( "[{:s}]", key_buffer ).data( );
         }
         };
     };
@@ -862,7 +871,7 @@ namespace Mui {
     class c_button : public c_controls {
     public:
         c_button( const char* item, bool* btn, vec2_t btnsize = { 0.0f, 0.0f } ) {
-            padding = { 0.0f, 10.0f };
+            padding = { 0.0f, 15.0f };
             size = btnsize;
             childname = item;
             clicked = btn;

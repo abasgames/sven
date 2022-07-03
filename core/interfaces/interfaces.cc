@@ -29,6 +29,18 @@ double* xti::g_gamespeed = nullptr;
 std::uintptr_t* xti::g_playerextrainfo = nullptr;
 std::uintptr_t xti::g_gameoverlayrenderer = 0;
 std::uintptr_t xti::g_usermsghook = 0;
+std::uintptr_t xti::g_gameroverlayrenderer_is_opened = 0;
+
+std::uintptr_t xti::ut_unhook_func = 0;
+std::uintptr_t xti::ut_beginread = 0;
+std::uintptr_t xti::ut_readstr = 0;
+std::uintptr_t xti::ut_readcoord = 0;
+std::uintptr_t xti::ut_readshort = 0;
+std::uintptr_t xti::ut_readbyte = 0;
+std::uintptr_t xti::ut_mapname = 0;
+std::uintptr_t xti::ut_buffered = 0;
+std::uintptr_t xti::ut_insert_color_change = 0;
+std::uintptr_t xti::ut_print_to_console = 0;
 
 // dump the interfaces from the "CreateInterface export" table.
 void dump_interfaces( const sdk::interface_reg_t* interface_reg ) {
@@ -92,6 +104,7 @@ void xti::setup_interfaces( ) {
 	auto dw_playerinfo				= xtu::find( "client.dll", "0F BF 80 ? ? ? ? 48" ).add( 0x3 ); // + 0x3
 	auto dw_gameoverlay_swap		= xtu::find( "gameoverlayrenderer.dll", "FF 15 ? ? ? ? 80 3D ? ? ? ? ? 8B F0 74 0C" ).add( 0x2 ); // + 0x2
 	auto dw_globalvars				= xtu::find( "client.dll", "A1 ? ? ? ? 8B 88 ? ? ? ? 03 48 0C 8D 84 24 ? ? ? ?" ).add( 0x1 ); // + 0x1
+	auto dw_gameoverlay_open		= xtu::find( "gameoverlayrenderer.dll", "80 3D ? ? ? ? ? 8B 45 08 74 0A C6 40 09 01" ).add( 0x2 );
 
 	xti::g_studiomodel				= dw_studiomodel.at< sdk::engine_studio_api_t* >( );
 	xti::g_playermove				= *dw_playermove.at< sdk::player_move_t** >( );
@@ -101,6 +114,7 @@ void xti::setup_interfaces( ) {
 	xti::g_playerextrainfo			= dw_playerinfo.at< std::uintptr_t* >( );
 	xti::g_gameoverlayrenderer		= dw_gameoverlay_swap.at< std::uintptr_t >( );
 	xti::g_globalvars				= *dw_globalvars.at< sdk::globalvars_t** >( );
+	xti::g_gameroverlayrenderer_is_opened = dw_gameoverlay_open.at< std::uintptr_t >( );
 
 	VirtualProtect( reinterpret_cast< void* >( xti::g_gamespeed ), sizeof( double ), PAGE_EXECUTE_READWRITE, &dw_old_protection );
 
@@ -112,52 +126,58 @@ void xti::setup_interfaces( ) {
 
 	xti::g_usermsghook				= dw_hookmsg.at< std::uintptr_t >( );
 
+	auto dw_unhook_func = xtu::find( "gameoverlayrenderer.dll", "55 8B EC C7" );
+	xti::ut_unhook_func = dw_unhook_func.as< std::uintptr_t >( );
+
+	auto dw_beginread = xtu::find( "client.dll", "8B 44 24 08 A3 ? ? ? ? 8B 44" );
+	xti::ut_beginread = dw_beginread.as< std::uintptr_t >( );
+
+	auto dw_readstr = xtu::find( "client.dll", "8B 15 ? ? ? ? 33 C0 53" );
+	xti::ut_readstr = dw_readstr.as< std::uintptr_t >( );
+
+	auto dw_readcoord = xtu::find( "client.dll", "51 56 8B 35 ? ? ? ? 57 8D 7E 04 3B 3D" );
+	xti::ut_readcoord = dw_readcoord.as< std::uintptr_t >( );
+
+	auto dw_readshort = xtu::find( "client.dll", "8B 0D ? ? ? ? 56 8D 71 02" );
+	xti::ut_readshort = dw_readshort.as< std::uintptr_t >( );
+
+	auto dw_readbyte = xtu::find( "client.dll", "8B 0D ? ? ? ? 8D 51 01 3B 15 ? ? ? ? 7E 0E C7 05" ).add( 0x48 );
+	xti::ut_readbyte = dw_readbyte.as< std::uintptr_t >( );
+
+	auto dw_mapname = xtu::find( "client.dll", "FF 15 ? ? ? ? 85 C0 74 61 68" );
+	xti::ut_mapname = dw_mapname.as< std::uintptr_t >( );
+
+	auto dw_buffered = xtu::find( "client.dll", "53 56 8B 74 24 0C BB ? ? ? ? 57" );
+	xti::ut_buffered = dw_buffered.as< std::uintptr_t >( );
+
+	auto dw_insert_color_change = xtu::find( "GameUI.dll", "55 8B EC 8B 91 ? ? ? ? 83 EC 10 8B 45 08 C1 E2 04 03 91" );
+	xti::ut_insert_color_change = dw_insert_color_change.as< std::uintptr_t >( );
+
+	auto dw_print_to_console = xtu::find( "GameUI.dll", "55 8B EC 83 EC 08 A1 ? ? ? ? 33 C5 89 45" );
+	xti::ut_print_to_console = dw_print_to_console.as< std::uintptr_t >( );
+
 	xtu::console_color_printf( { 210, 160, 210, 255 }, "[hack] " );
 	xtu::console_color_printf( { 228, 218, 228, 255 }, "version: %s\n", _CORE_STRING );
 
+	xtu::console_color_printf( { 210, 160, 210, 255 }, "================ THIS UPDATE ================\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§1) Added another speed method, called \"fast & slow\"\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§2) Added multiplier for speedfactor, meaning it now consists of 2 sliders instead of one.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§3) Fixed bug where menu, visuals, crosshair etc.. would render when steam overlay was present.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§4) Removed Fastrun velocity check, it's now uncapped.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§5) Users are now able to rebind their menu key. See \"cfg\" tab.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§6) Users can now disable push notifications. See misc.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§7) Signatures are now stored once, for optimizing reasons.\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§8) Users may now move the menu by hovering at the top left corner of the menu.\n\n" );
+
 	xtu::console_color_printf( { 210, 160, 210, 255 }, "================ NEXT UPDATE ================\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§1) Fastrun / Fastmove. Making you run faster, using ground strafe mechanics.\n" );
+	xtu::console_color_printf( { 228, 89, 89, 255 }, "[PRIORITY!] " );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§1) Fix mouse problems. Some users have reported that cursor freeze at center.\n" );
 	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§2) Rainbow color model. Basically changes the top & bottomcolor of your model and cycles through a hue spectrum.\n" );
 	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§3) Freecam.\n" );
 	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§4) Spycam. Go to any spot on the map, place a camera and access that camera at any point.\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§5) Push Notifications. Yes i know, this exists as of now. But in the next you'll be able to turn it off.\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§6) Better vote handling. Do things when vote is against YOU, Important person, etc..\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§7) Change hotkey modes. Being able to select wether an option should be held or toggle'able.\n\n" );
-
-	xtu::console_color_printf( { 210, 160, 210, 255 }, "================ MAYBE IN THE NEXT UPDATE ================\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§1) Perfect circle strafer. Traces the environment, and proceeds to QUAKE strafe in a circle, avoiding obstacles.\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§2) Better way of handling tickbase manipulation.\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§3) Fake ping.\n\n" );
-
-	xtu::console_color_printf( { 210, 160, 210, 255 }, "================ KNOWN BUGS ================\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§1) Hotkey's sometimes stop responding to new keybind, meaning you can't rebind. (Working on it)\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§2) There's no way of selecting wether a key should be hold or toggle, (Working on it)\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§3) Color picker missing saturation & value sliders (Working on it)\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§4) Votekill isn't working / it's disabled. (Yes, im working on fixing it. It had some issues)\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§5) Tickbase manipulation stops the user, but flie's forward when autostrafing (Working on a fix for that too.)\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§6) WASD AFK Method keeps jumping in water, even when player not afk. (Yes, and i'm working on it, this is not prio.)\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§7) When marking a player important, the text for steamid glitches. This is due to formating issues.\n\n" );
-
-	xtu::console_color_printf( { 210, 160, 210, 255 }, "================ THINGS I WONT ADD ================\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§1) Console commands. The reason is that there's no way of deleting a command when unloading the cheat.\n   So it will cause a crash.\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§2) Any exploits that's gamebreaking, anything that destroy's anyone else's experience will NOT be added.\n   Such things are not tolerated.\n\n" );
-	
-	xtu::console_color_printf( { 210, 160, 210, 255 }, "================ THINGS I MAY CONSIDER IN THE FUTURE ================\n" );
-	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§1) Adding a scripting language. Making users able to code their own plugins for this cheat. And\n   being able to load it in at any time. [LUA/CHAISCRIPT]\n\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§5) Better vote handling. Do things when vote is against YOU, Important person, etc..\n" );
+	xtu::console_color_printf( { 228, 218, 228, 255 }, "\t§6) Change hotkey modes. Being able to select wether an option should be held or toggle'able.\n\n" );
 	
 	xtu::console_color_printf( { 210, 160, 210, 255 }, "[hack] " );
 	xtu::console_color_printf( { 228, 218, 228, 255 }, "config save path: %s\n", ( std::filesystem::current_path( ) / "hack" ).string( ).data( ) );
-	//PlaySoundA( ( char* )tamashi, NULL, SND_MEMORY | SND_SYNC );
-
-	//xti::g_engine->Con_Printf( "// == // == // == // == // == // == // == // == // == // == //\n" );
-
-	//xti::g_console->printf( "hello" );
-	//for ( int i = 0; i < 20; i++ ) {
-	//	auto ptr = xtu::find( "client.dll", "A1 ? ? ? ? 8B 88 ? ? ? ? 03 48 0C 8D 84 24 ? ? ? ?" ).add( i );
-	//	if( auto d = ptr.at< void* >( ) )
-	//		xti::g_engine->Con_Printf( "found addr: %X, idx: %i, %04X\n", xtu::get_module_base_address( "client.dll", d ), i, i );
-	//};
-	// 
-	//xti::g_engine->pfnRegisterVariable( "sharingan_kill", "guwi", 0 );
-	//xti::g_engine->pfnAddCommand( "sharingan_status", StatusPlayers );
 };

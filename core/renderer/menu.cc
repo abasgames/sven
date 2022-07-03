@@ -27,7 +27,7 @@ enum MUI_TABS : int {
 };
 
 const char* autostrafe_modes[ 2 ] = { "telehop", "velocity" };
-const char* speedhack_modes[ 5 ] = { "fast", "super fast", "slow", "super slow", "factor" };
+const char* speedhack_modes[ 6 ] = { "fast", "super fast", "slow", "super slow", "factor", "fast & slow" };
 const char* antiafk_modes[ 7 ] = { "side", "forward", "both", "wasd", "roaming", "kill", "gibme" };
 const char* antiaim_yaw_modes[ 13 ] = { "none", "zero", "backwards", "sideways", "back jitter", "slowspin", "fastspin", "goldenspin", "random", "fake left", "fake right", "switch", "lisp" };
 const char* antiaim_pitch_modes[ 10 ] = { "none", "zero", "emotion", "up", "down", "up2", "fakedown", "fakeup", "varie", "lisp" };
@@ -42,6 +42,10 @@ void RenderConfig( Mui::c_window* window ) {
         auto groupbox = std::make_unique< Mui::c_groupbox >( "configuration", Mui::vec2_t{ 180.0f, 340.0f } );
         static bool b_save_settings = false;
         static bool b_load_settings = false;
+        static bool b_unbind_key = false;
+
+        groupbox->add( std::make_unique< Mui::c_label_hotkey >( "Menu key", &cfg::get< int >( vars.menu_key ) ) );
+        groupbox->add( std::make_unique< Mui::c_separator >( false, 10.0f ) );
 
         groupbox->add( std::make_unique< Mui::c_button >( "load settings", &b_load_settings ) );
         if ( b_load_settings ) {
@@ -50,7 +54,7 @@ void RenderConfig( Mui::c_window* window ) {
             b_load_settings = false;
         };
 
-        groupbox->add( std::make_unique< Mui::c_separator >( false, 40.0f ) );
+        groupbox->add( std::make_unique< Mui::c_separator >( false, 10.0f ) );
 
         groupbox->add( std::make_unique< Mui::c_button >( "save settings", &b_save_settings ) );
         if ( b_save_settings ) {
@@ -59,13 +63,12 @@ void RenderConfig( Mui::c_window* window ) {
             b_save_settings = false;
         }
 
-        groupbox->add( std::make_unique< Mui::c_separator >( false, 40.0f ) );
-        static bool b_unbind_key = false;
+        groupbox->add( std::make_unique< Mui::c_separator >( false, 10.0f ) );
         groupbox->add( std::make_unique< Mui::c_button >( "unbind key", &b_unbind_key ) );
         if ( b_unbind_key ) {
             Renderer::PushNotification( "To unbind a key, click the ", "[...]", " bind and hit escape.", 7000.0f );
             b_unbind_key = false;
-        }
+        };
 
         window->add( std::move( groupbox ) );
     }
@@ -110,14 +113,23 @@ void RenderMovement( Mui::c_window* window ) {
 
         groupbox->add( std::make_unique< Mui::c_checkbox_hotkey >( "previous weapon", &cfg::get< bool >( vars.fastswitch ), &cfg::get< int >( vars.fastswitch_key ) ) );
 
-        groupbox->add( std::make_unique< Mui::c_checkbox_hotkey >( "speedhack", &cfg::get< bool >( vars.speedhack ), &cfg::get< int >( vars.speedhack_key ) ) );
+        if( cfg::get< int >( vars.speedhack_mode ) == options::speedhack_modes::speed_fast_slow )
+            groupbox->add( std::make_unique< Mui::c_checkbox >( "speedhack", &cfg::get< bool >( vars.speedhack ) ) );
+        else
+            groupbox->add( std::make_unique< Mui::c_checkbox_hotkey >( "speedhack", &cfg::get< bool >( vars.speedhack ), &cfg::get< int >( vars.speedhack_key ) ) );
 
         if ( cfg::get< bool >( vars.speedhack ) ) {
             groupbox->add( std::make_unique< Mui::c_combobox >( "speedhack mode", &cfg::get< int >( vars.speedhack_mode ), speedhack_modes, MUI_SIZE( speedhack_modes ) ) );
 
-            if ( cfg::get< int >( vars.speedhack_mode ) == 4 )
-                groupbox->add( std::make_unique< Mui::c_slider_float >( "ups", &cfg::get< float >( vars.speedhack_factor ), 0.0f, 100.0f, "ups" ) );
-        }
+            if ( cfg::get< int >( vars.speedhack_mode ) == options::speedhack_modes::speed_factor ) {
+                groupbox->add( std::make_unique< Mui::c_slider_float >( "ups", &cfg::get< float >( vars.speedhack_factor ), 0.0f, 10.0f, "ups" ) );
+                groupbox->add( std::make_unique< Mui::c_slider_float >( "multiplier", &cfg::get< float >( vars.speedhack_multiplier ), 0.0f, 50.0f, "x" ) );
+            }
+            else if ( cfg::get< int >( vars.speedhack_mode ) == options::speedhack_modes::speed_fast_slow ) {
+                groupbox->add( std::make_unique< Mui::c_label_hotkey >( "fast key", &cfg::get< int >( vars.speedhack_fast_key ) ) );
+                groupbox->add( std::make_unique< Mui::c_label_hotkey >( "slow key", &cfg::get< int >( vars.speedhack_slow_key ) ) );
+            };
+        };
 
         groupbox->add( std::make_unique< Mui::c_checkbox >( "jumpbug", &cfg::get< bool >( vars.jumpbug ) ) );
 
@@ -331,7 +343,7 @@ void PlayerFromList( Mui::c_groupbox* grp ) {
 
     grp->add( std::make_unique< Mui::c_label >( player_info->name ) );
     grp->add( std::make_unique< Mui::c_separator >( ) );
-    grp->add( std::make_unique< Mui::c_label >( std::format( "model: {}", player_info->model ).data( ) ) );
+    grp->add( std::make_unique< Mui::c_label >( std::format( "model: {:s}", player_info->model ).data( ) ) );
     grp->add( std::make_unique< Mui::c_label >( std::format( "steamid: {}", player_info->m_nSteamID ).data( ) ) );
 
     grp->add( std::make_unique< Mui::c_button >( "steal skin", &m_player_skins[ m_iplayerindex ] ) );
@@ -416,13 +428,6 @@ void RenderOther( Mui::c_window* window ) {
                 groupbox->add( std::make_unique< Mui::c_combobox >( "[vote] modes", &cfg::get< int >( vars.vote_mode ), vote_modes, MUI_SIZE( vote_modes ) ) );
         };
 
-        //groupbox->add( std::make_unique< Mui::c_checkbox_hotkey >( "vote kill", &cfg::get< bool >( vars.vote_kill ), &cfg::get< int >( vars.vote_kill_key ) ) );
-        //if ( cfg::get< bool >( vars.vote_kill ) ) {
-        //    groupbox->add( std::make_unique< Mui::c_label >( "use \"hack_kill <player>\" command" ) );
-        //    groupbox->add( std::make_unique< Mui::c_label >( "in the console." ) );
-        //    groupbox->add( std::make_unique< Mui::c_separator >( ) );
-        //}
-
         groupbox->add( std::make_unique< Mui::c_checkbox >( "scr_update rate", &cfg::get< bool >( vars.scr ) ) );
         window->add( std::move( groupbox ) );
     }
@@ -434,16 +439,9 @@ void RenderOther( Mui::c_window* window ) {
 
         if ( cfg::get< bool >( vars.follow_player ) ) {
             groupbox->add( std::make_unique< Mui::c_checkbox >( "follow important", &cfg::get< bool >( vars.follow_important ) ) );
-            if ( !cfg::get< bool >( vars.follow_important ) ) {
-                groupbox->add( std::make_unique< Mui::c_slider_float >( "dist", &cfg::get< float >( vars.follow_distance ), 1.0f, 100.0f ) );
-            }
-           // else {
-           //     groupbox->add( std::make_unique< Mui::c_checkbox >( "follow order", &cfg::get< bool >( vars.follow_order ) ) );
-           // }
+            groupbox->add( std::make_unique< Mui::c_slider_float >( "follow dist", &cfg::get< float >( vars.follow_distance ), 1.0f, 100.0f ) );
             groupbox->add( std::make_unique< Mui::c_checkbox >( "steal player skin", &cfg::get< bool >( vars.follow_steal_skin ) ) );
         }
-
-        //groupbox->add( std::make_unique< Mui::c_checkbox >( "homie", &cfg::get< bool >( vars.autohomie ) ) );
 
         groupbox->add( std::make_unique< Mui::c_checkbox_hotkey >( "mirror cam", &cfg::get< bool >( vars.mirror ), &cfg::get< int >( vars.mirror_key ) ) );
 
@@ -470,6 +468,8 @@ void RenderOther( Mui::c_window* window ) {
             groupbox->add( std::make_unique< Mui::c_saturation_slider >( "crosshair sat", &cfg::get< float >( vars.crosshair_sat ) ) );
             groupbox->add( std::make_unique< Mui::c_slider_float >( "crosshair gap", &cfg::get< float >( vars.crosshair_gap ), 0.0f, 100.0f ) );
         }
+
+        groupbox->add( std::make_unique< Mui::c_checkbox >( "draw push notifications", &cfg::var( vars.notifications ).as< bool >( ) ) );
         window->add( std::move( groupbox ) );
     }
 
@@ -478,6 +478,7 @@ void RenderOther( Mui::c_window* window ) {
         groupbox->add( std::make_unique< Mui::c_color_picker >( "model color [top]", &cfg::get< float >( vars.model_color_top ) ) );
         groupbox->add( std::make_unique< Mui::c_color_picker >( "model color [bottom]", &cfg::get< float >( vars.model_color_bottom ) ) );
         groupbox->add( std::make_unique< Mui::c_button >( "update model color", &set_changed_model ) );
+
         if ( set_changed_model ) {
             Renderer::PushNotification( "Model", " color ", "has been updated." );
             xti::g_engine->pfnCvar_Set( "topcolor", std::format( "{}", cfg::get< float >( vars.model_color_top ) * 255.0f ).data( ) );
@@ -503,19 +504,13 @@ void Mui::RenderOldMenu( ) {
             is_holding_menu = false;
 
         if ( is_holding_menu ) {
-            //window_menu_pos.x = io.MousePos.x;
-            //window_menu_pos.y = io.MousePos.y;
             cfg::get< float >( vars.menu_pos_x ) = io.MousePos.x;
             cfg::get< float >( vars.menu_pos_y ) = io.MousePos.y;
         }
 
         auto window = std::make_unique< Mui::c_window >( "hack", Mui::vec2_t( posx, posy ), _CORE_BUILD_DATE );
-        //window->debug( );
         window->begin( );
-        //{
         window->tabs< const char*, const char*, const char*, const char*, const char* >( &cfg::get< int >( vars.menu_index ), "move", "visuals", "misc", "playerlist", "cfg" );
-        // RenderDebugWindow( window.get() );
-     //
         switch ( static_cast< MUI_TABS >( cfg::get< int >( vars.menu_index ) ) ) {
         case MUI_Movement:
             RenderMovement( window.get( ) );
@@ -537,16 +532,11 @@ void Mui::RenderOldMenu( ) {
         default:
             break;
         };
-        //vec2_t menusize = window->get_size( );
-        //vec2_t menupos = window->get_position( );
         window->end( );
-
-        // if ( options::visuals::enabled && static_cast< MUI_TABS >( options::show_menu_tab ) == MUI_Visuals )
-        //     RenderVisuals( { menupos.x + menusize.x + 5.0f, menupos.y }, { 180.0f, 282.0f } );
     }
 };
 
-void Mui::RenderNewMenu( ) { // menu inspired by qo0, full creds to him <3
+void Mui::RenderNewMenu( ) { 
 
 };
 
@@ -563,7 +553,7 @@ void Mui::Setup( ) {
     style.AntiAliasedFill = false;
 
     ImFontConfig cfg;
-    Renderer::g_pFont = io.Fonts->AddFontFromFileTTF( "C:\\Windows\\Fonts\\Tahoma.ttf", 10.0f, NULL, ImGui::GetIO( ).Fonts->GetGlyphRangesCyrillic( ) );
+    Renderer::g_pFont = io.Fonts->AddFontFromFileTTF( "C:\\Windows\\Fonts\\Tahoma.ttf", 10.0f, NULL, ImGui::GetIO( ).Fonts->GetGlyphRangesDefault( ) );
     Renderer::g_pGilroy = io.Fonts->AddFontFromFileTTF( "C:\\Windows\\Fonts\\Verdana.ttf", 12.0f, NULL, ImGui::GetIO( ).Fonts->GetGlyphRangesCyrillic( ) );
 }
 void Mui::set_key_down( int k )

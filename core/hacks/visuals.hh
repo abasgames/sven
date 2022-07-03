@@ -549,8 +549,6 @@ void RenderDlight( sdk::cl_entity_s* entity, sdk::color24 color, bool is_player 
 	};
 };
 
-//constexpr std::uint64_t admin_profile_id = 76561198203141630U;
-
 void RenderAmmo( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
 	if ( !cfg::get< bool >( vars.world ) )
 		return;
@@ -737,11 +735,6 @@ void RenderPlayer( sdk::cl_entity_s* entity, int idx, sdk::cl_entity_s* local ) 
 
 		if ( is_player_dead )
 			Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 18.0f }, ImColor( 255, 0, 0, 255 ), "*DEAD*", true, Renderer::g_pGilroy, 10.0f );
-
-		//bool is_admin = player_info->m_nSteamID == admin_profile_id;
-		//
-		//if( is_admin )
-		//	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 18.0f }, ImColor( 255, 0, 0, 255 ), "[ADMIN]", true, Renderer::g_pGilroy, 12.0f );
 	};
 
 	if ( is_player_dead )
@@ -773,9 +766,9 @@ void RenderPlayer( sdk::cl_entity_s* entity, int idx, sdk::cl_entity_s* local ) 
 	if ( cfg::get< bool >( vars.visuals_box ) )
 		Renderer::AddRectOutline( { box.x, box.y }, { box.w, box.h }, is_dormant ? ImColor( 255, 255, 255, 255 ) : ImColor::HSV( cfg::get< float >( vars.visuals_hue ), 1.0f, 1.0f ) );
 
-	if ( cfg::get< bool >( vars.visuals_snaplines ) ) {
+	if ( cfg::get< bool >( vars.visuals_snaplines ) ) { // bad way of doing this, use screen info from engine instead.
 		Renderer::AddLine( { static_cast< float >( GetSystemMetrics( SM_CXSCREEN ) / 2 ), static_cast< float >( GetSystemMetrics( SM_CYSCREEN ) / 2 ) }, { box.x + box.w / 2.0f, box.y + box.h }, ImColor( 70, 186, 128, 255 ) );
-	}
+	};
 
 	if ( cfg::get< bool >( vars.visuals_health ) )
 		healthbar( get_entity_health( idx ), box );
@@ -827,5 +820,10 @@ namespace visuals {
 				RenderMobs( entity, localplayer );
 			};
 		};
+	};
+
+	void on_render( ) {
+		on_visuals_esp( );
+		on_visuals_crosshair( );
 	};
 };

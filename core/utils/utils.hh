@@ -70,6 +70,8 @@ namespace xtu {
 
 	char* util_get_map_name( );
 
+	bool is_overlay_opened( );
+
 	// this is so fucking ugly, but this is the only solution i could find.
 // Basically, the animtime stops if the entity is dead or has frozen,
 // GetClientTime ticks at the same speed as animtime, but considering that clienttime is always ticking, we

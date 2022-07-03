@@ -141,7 +141,7 @@ LRESULT __stdcall hk_wnd_proc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		break;
 	};
 
-	if ( Mui::is_key_down( options::show_menu_key ) )
+	if ( Mui::is_key_down( cfg::get< int >( vars.menu_key ) ) )
 		options::show_menu = !options::show_menu;
 
 	if ( options::show_menu ) {
@@ -176,15 +176,15 @@ bool __stdcall xth::hk_swap_buffers( HDC hdc ) {
 	ImGui_ImplOpenGL3_NewFrame( );
 	ImGui::NewFrame( );
 
-	Renderer::Setup( ImGui::GetBackgroundDrawList( ) );
-	visuals::on_visuals_esp( );
-	visuals::on_visuals_crosshair( );
+	if ( !xtu::is_overlay_opened( ) ) {
+		Renderer::Setup( ImGui::GetBackgroundDrawList( ) );
+		visuals::on_render( );
 
-	Renderer::RenderNotifications( );
+		Renderer::RenderNotifications( );
 
-	RenderModules( );
-
-	Mui::Render( );
+		RenderModules( );
+		Mui::Render( );
+	};
 
 	ImGui::EndFrame( );
 	ImGui::Render( );

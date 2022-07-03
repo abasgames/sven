@@ -33,8 +33,11 @@ struct vars_t {
 
 	ADD_VAR( speedhack, bool, false );
 	ADD_VAR( speedhack_key, int, static_cast< int >( 0x1b ) );
+	ADD_VAR( speedhack_fast_key, int, static_cast< int >( 0x1b ) );
+	ADD_VAR( speedhack_slow_key, int, static_cast< int >( 0x1b ) );
 	ADD_VAR( speedhack_mode, int, 0 );
-	ADD_VAR( speedhack_factor, float, 100.0f );
+	ADD_VAR( speedhack_factor, float, 10.0f );
+	ADD_VAR( speedhack_multiplier, float, 50.0f );
 
 	ADD_VAR( jumpbug, bool, true );
 	ADD_VAR( bunnyhop, bool, true );
@@ -69,6 +72,7 @@ struct vars_t {
 	ADD_VAR( airrun, bool, false );
 	ADD_VAR( fastrun, bool, false );
 	ADD_VAR( scr, bool, false );
+	ADD_VAR( notifications, bool, true );
 
 	ADD_VAR( crosshair, bool, true );
 	ADD_VAR( crosshair_hue, float, 0.0f );

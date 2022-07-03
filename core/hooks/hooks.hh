@@ -33,6 +33,12 @@ namespace xth {
 	using fn_end_vote = int( * )( const char* message, int size, void* buffer );
 	int hk_end_vote( const char* sz_message, int size, void* buffer );
 
+	using fn_votepopup_open = int( __thiscall* )( void* );
+	int __fastcall hk_votepopup_open( void* ecx, void* edx );
+
+	using fn_votepopup_close = int( __thiscall* )( void* );
+	int __fastcall hk_votepopup_close( void* ecx, void* edx );
+
 	using fn_start_vote = int( * )( const char* message, int size, void* buffer );
 	int hk_start_vote( const char* sz_message, int size, void* buffer );
 

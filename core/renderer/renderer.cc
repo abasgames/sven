@@ -1,6 +1,7 @@
 #include <windows.h>
 #include "renderer.hh"
 #include <vector>
+#include <hacks/vars.hh>
 ImFont* Renderer::g_pFont = nullptr;
 ImFont* Renderer::g_pGilroy = nullptr;
 ImDrawList* Renderer::g_pDrawList = nullptr;
@@ -196,6 +197,9 @@ std::vector< notification_t > notifications{ };
 
 void Renderer::PushNotification( const char* a0, const char* a1, const char* a2, float delay, ImColor color )
 {
+	if ( !cfg::get< bool >( vars.notifications ) )
+		return;
+
 	notification_t data( a0, a1, a2, delay, color );
 	data.next_notification_padding = notifications.size( ) * 20.0f;
 	notifications.push_back( data );

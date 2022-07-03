@@ -442,25 +442,34 @@ namespace createmove {
 		if ( !xti::g_gamespeed )
 			return;
 
-		if ( !Mui::is_key_down( cfg::get< int >( vars.speedhack_key ) ) )
-			return;
+		if ( cfg::get< int >( vars.speedhack_mode ) == options::speedhack_modes::speed_fast_slow ) {
+			if ( Mui::is_key_down( cfg::get< int >( vars.speedhack_fast_key ) ) )
+				*xti::g_gamespeed = 22.0f * 1000.0;
 
-		switch ( cfg::get< int >( vars.speedhack_mode ) ) {
-		case 0:
-			*xti::g_gamespeed = 22.0f * 1000.0; // average speed enjoyer.
-			break;
-		case 1:
-			*xti::g_gamespeed = 44.0f * 1000.0; // blazing fast movement.
-			break;
-		case 2:
-			*xti::g_gamespeed = 0.1f * 1000.0; // really fucking slow movement.
-			break;
-		case 3:
-			*xti::g_gamespeed = 0.00298f * 1000.0; // the slowest point i could find. this does not slow down nor makes other players "choppy" when moving.
-			break;
-		case 4:
-			*xti::g_gamespeed = cfg::get< float >( vars.speedhack_factor ) * 1000.0; // the slowest point i could find. this does not slow down nor makes other players "choppy" when moving.
-			break;
+			if ( Mui::is_key_down( cfg::get< int >( vars.speedhack_slow_key ) ) )
+				*xti::g_gamespeed = 0.1f * 1000.0;
+		}
+		else {
+			if ( !Mui::is_key_down( cfg::get< int >( vars.speedhack_key ) ) )
+				return;
+
+			switch ( cfg::get< int >( vars.speedhack_mode ) ) {
+			case 0:
+				*xti::g_gamespeed = 22.0f * 1000.0; // average speed enjoyer.
+				break;
+			case 1:
+				*xti::g_gamespeed = 44.0f * 1000.0; // blazing fast movement.
+				break;
+			case 2:
+				*xti::g_gamespeed = 0.1f * 1000.0; // really fucking slow movement.
+				break;
+			case 3:
+				*xti::g_gamespeed = 0.00298f * 1000.0; // the slowest point i could find. this does not slow down nor makes other players "choppy" when moving.
+				break;
+			case 4:
+				*xti::g_gamespeed = ( cfg::get< float >( vars.speedhack_factor ) * cfg::get< float >( vars.speedhack_multiplier ) ) * 1000.0; // the slowest point i could find. this does not slow down nor makes other players "choppy" when moving.
+				break;
+			};
 		};
 	};
 
@@ -928,7 +937,7 @@ namespace createmove {
 				auto height_delta = std::fabsf( my_pos.z - trace->endpos.z );
 				int m_iState = 0;
 
-				if ( height_delta > 0.0f ) {
+				if ( height_delta >= 0.1f ) {
 					m_cmd->buttons |= sdk::in_jump;
 					if ( m_cmd->buttons & sdk::in_jump )
 						m_cmd->buttons &= ~sdk::in_jump;

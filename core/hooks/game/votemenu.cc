@@ -24,6 +24,8 @@ xth::fn_votepopup_update org_votepopup_update = nullptr;
 xth::fn_votepopup_reset org_votepopup_reset = nullptr;
 xth::fn_end_vote org_end_vote = nullptr;
 xth::fn_start_vote org_start_vote = nullptr;
+xth::fn_votepopup_open org_votepopup_open = nullptr;
+xth::fn_votepopup_close org_votepopup_close = nullptr;
 
 void* __fastcall xth::hk_votepopup_reset( void* ecx, void* edx ) {
 	return org_votepopup_reset( ecx );
@@ -33,42 +35,20 @@ void __fastcall xth::hk_votepopup_update( void* ecx, void* edx ) {
 	org_votepopup_update( ecx );
 }
 
-using fn_votepopup_open = int( __thiscall* )( void* );
-fn_votepopup_open org_votepopup_open = nullptr;
-int __fastcall hk_votepopup_open( void* ecx, void* edx ) {
+int __fastcall xth::hk_votepopup_open( void* ecx, void* edx ) {
 	auto vote = reinterpret_cast< sdk::c_vote_popup* >( ecx );
 	if ( cfg::get< bool >( vars.vote ) && cfg::get< bool >( vars.vote_auto ) )
 		vote->slot_input( cfg::get< int >( vars.vote_mode ) == 0 ? 1 : 0 );
 	return org_votepopup_open( ecx );
 };
 
-using fn_votepopup_close = int( __thiscall* )( void* );
-fn_votepopup_close org_votepopup_close = nullptr;
-int __fastcall hk_votepopup_close( void* ecx, void* edx ) {
+int __fastcall xth::hk_votepopup_close( void* ecx, void* edx ) {
 	auto vote = reinterpret_cast< sdk::c_vote_popup* >( ecx );
 	return org_votepopup_close( ecx );
 };
 
 int xth::hk_end_vote( const char* message, int size, void* buffer ) {
 	Renderer::PushNotification( "The ", "vote", " has ended.", 4000.0f, ImColor( 112, 241, 144, 255 ) );
-	if( cfg::get< bool >( vars.vote ) && cfg::get< bool >( vars.vote_kill ) && Mui::is_key_toggle( cfg::get< int >( vars.vote_kill_key ) ) )
-	if ( auto str = xti::g_engine->pfnGetCvarString( "hack_kill" ) ) {
-		//for ( auto it = 0; it < xti::g_engine->GetMaxClients( ); it++ ) {
-		//	auto ent = xti::g_engine->GetEntityByIndex( it );
-		//	if ( !ent )
-		//		continue;
-		//
-		//	auto info = xti::g_studiomodel->PlayerInfo( it - 1 );
-		//	if ( !info )
-		//		continue;
-		// 
-		// // this will be a feature later on, the goal is to lock on by steamid.
-		//};
-
-
-		xti::g_engine->pfnClientCmd( std::format( "votekill \"{:s}\"", str ).data( ) );
-		xti::g_engine->pfnClientCmd( "retry" );
-	};
 	return org_end_vote( message, size, buffer );
 };
 
@@ -84,7 +64,6 @@ int __fastcall xth::hk_votepopup_msgfunc( sdk::c_vote_popup* vote, void* edx, co
 	static bool g_initialised = false;
 	if ( !g_initialised ) {
 		// initialize a "runtime hooking" schedule.
-		// for the urge of "trolling". i've set up 2 hooks.
 
 		AddRuntimeHook( m_reset, 127, hk_votepopup_reset, org_votepopup_reset );
 		Renderer::PushNotification( "Hook: ", "Reset", " has been hooked to the game.", 4000.0f, ImColor( 232, 184, 73, 255 ) );
@@ -97,6 +76,12 @@ int __fastcall xth::hk_votepopup_msgfunc( sdk::c_vote_popup* vote, void* edx, co
 
 		AddRuntimeHook( m_update, 132, hk_votepopup_update, org_votepopup_update );
 		Renderer::PushNotification( "Hook: ", "Update", " has been hooked to the game.", 4000.0f, ImColor( 62, 180, 186, 255 ) );
+
+		// This will hook the following.
+		// CVotePopup::Reset
+		// CVotePopup::Open
+		// CVotePopup::Close
+		// CVotePopup::Update
 
 		g_initialised = true;
 	};

@@ -196,11 +196,8 @@ void xtu::fix_movement( sdk::c_vector& base_angles, sdk::c_user_cmd* cmd ) {
 // asked swift if he had an idea on how i should get the cursor pos, and he told me to unhook their functions.
 // so credits to him for that.
 void xtu::overlay_unhook_function( void* func, bool rehook ) { 
-	// Unhook
-	auto dw_unhook_func = xtu::find( "gameoverlayrenderer.dll", "55 8B EC C7" );
-
 	using fn = void( * )( void* );
-	static auto ofn = dw_unhook_func.as< fn >( );
+	static auto ofn = ( fn )( xti::ut_unhook_func );
 	if ( !ofn )
 		return;
 
@@ -208,11 +205,8 @@ void xtu::overlay_unhook_function( void* func, bool rehook ) {
 };
 
 void xtu::begin_read( void* buffer, int size ) {
-	// BEGIN_READ
-	auto dw_beginread = xtu::find( "client.dll", "8B 44 24 08 A3 ? ? ? ? 8B 44" );
-
 	using fn = void( * )( void*, int );
-	static auto ofn = dw_beginread.as< fn >( );
+	static auto ofn = ( fn )( xti::ut_beginread );
 	if ( !ofn )
 		return;
 
@@ -220,11 +214,8 @@ void xtu::begin_read( void* buffer, int size ) {
 };
 
 char* xtu::read_string( ) {
-	// READ_STRING
-	auto dw_readstr = xtu::find( "client.dll", "8B 15 ? ? ? ? 33 C0 53" );
-
 	using fn = char* ( * )( );
-	static auto ofn = dw_readstr.as< fn >( );
+	static auto ofn = ( fn )( xti::ut_readstr );
 	if ( !ofn )
 		return nullptr;
 
@@ -232,11 +223,8 @@ char* xtu::read_string( ) {
 };
 
 double xtu::read_coord( ) {
-	// READ_COORD
-	auto dw_readcoord = xtu::find( "client.dll", "51 56 8B 35 ? ? ? ? 57 8D 7E 04 3B 3D" );
-
 	using fn = double( * )( );
-	static auto ofn = dw_readcoord.as< fn >( );
+	static auto ofn = ( fn )( xti::ut_readcoord );
 	if ( !ofn )
 		return 0.0;
 
@@ -244,11 +232,8 @@ double xtu::read_coord( ) {
 };
 
 unsigned short xtu::read_short( ) {
-	// READ_SHORT
-	auto dw_readshort = xtu::find( "client.dll", "8B 0D ? ? ? ? 56 8D 71 02" );
-
 	using fn = unsigned short( * )( );
-	static auto ofn = dw_readshort.as< fn >( );
+	static auto ofn = ( fn )( xti::ut_readshort );
 	if ( !ofn )
 		return 0;
 
@@ -272,11 +257,8 @@ void* xtu::usermsg_org( const char* message ) {
 };
 
 BYTE xtu::read_byte( ) {
-	// READ_BYTE
-	auto dw_readbyte = xtu::find( "client.dll", "8B 0D ? ? ? ? 8D 51 01 3B 15 ? ? ? ? 7E 0E C7 05" );
-
 	using fn = BYTE( * )( );
-	static auto ofn = dw_readbyte.add( 0x48 ).as< fn >( );
+	static auto ofn = ( fn )( xti::ut_readbyte );
 	if ( !ofn )
 		return 0x00;
 
@@ -284,45 +266,43 @@ BYTE xtu::read_byte( ) {
 }
 char* xtu::util_get_map_name( )
 {
-	// UTIL_GetMapName
-	auto dw_mapname = xtu::find( "client.dll", "FF 15 ? ? ? ? 85 C0 74 61 68" );
 	using fn = char* ( * )( );
-	static auto ofn = dw_mapname.as< fn >( );
+	static auto ofn = ( fn )( xti::ut_mapname );
 	if ( !ofn )
 		return nullptr;
 
 	return ofn( );
 }
 
-void xtu::buffered_localise_text_string( const char* msg ) {
-	auto dw_buffered = xtu::find( "client.dll", "53 56 8B 74 24 0C BB ? ? ? ? 57" );
+bool xtu::is_overlay_opened( )
+{
+	auto _overlay = *reinterpret_cast< bool* >( xti::g_gameroverlayrenderer_is_opened );
+	return _overlay;
+}
 
+void xtu::buffered_localise_text_string( const char* msg ) {
 	using ofn = char* ( * )( const char* );
-	static auto org = dw_buffered.as< ofn >( );
+	static auto org = ( ofn )( xti::ut_buffered );
 	if ( !org )
 		return;
 
 	xti::g_engine->Con_Printf( "[hack] sent %s -> 0x%X, got [%s]\n", msg, org( msg ), org( msg ) );
 };
 
-int xtu::insert_color_change( DWORD* ecx, int a2 ) // 55 8B EC 8B 91 ? ? ? ? 83 EC 10 8B 45 08 C1 E2 04 03 91
+int xtu::insert_color_change( DWORD* ecx, int a2 )
 {
-	auto dw_insert_color_change = xtu::find( "GameUI.dll", "55 8B EC 8B 91 ? ? ? ? 83 EC 10 8B 45 08 C1 E2 04 03 91" );
-
 	using fn = int( __thiscall* )( DWORD*, int );
-	static auto ofn = dw_insert_color_change.as< fn >( );
+	static auto ofn = ( fn )( xti::ut_insert_color_change );
 	if ( !ofn )
 		return -1;
 
 	return ofn( ecx, a2 );
 };
 
-int xtu::insert_text( void* ecx, const char* msg ) // 55 8B EC 83 EC 08 A1 ? ? ? ? 33 C5 89 45
+int xtu::insert_text( void* ecx, const char* msg )
 {
-	auto dw_print_to_console = xtu::find( "GameUI.dll", "55 8B EC 83 EC 08 A1 ? ? ? ? 33 C5 89 45" );
-
 	using fn = int( __thiscall* )( void*, const char* );
-	static auto ofn = dw_print_to_console.as< fn >( );
+	static auto ofn = ( fn )( xti::ut_print_to_console );
 	if ( !ofn )
 		return -1;
 
