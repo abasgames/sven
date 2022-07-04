@@ -103,6 +103,9 @@ struct vars_t {
 	ADD_VAR( mirror, bool, false );
 	ADD_VAR( mirror_key, int, static_cast< int >( 0x1b ) );
 
+	ADD_VAR( spy, bool, false );
+	ADD_VAR( spy_key, int, static_cast< int >( 0x1b ) );
+
 	ADD_VAR( autohomie, bool, false );
 
 	ADD_VAR( visuals, bool, true );
@@ -153,6 +156,9 @@ struct vars_t {
 
 	ADD_VAR( model_color_top, float, 0.0f );
 	ADD_VAR( model_color_bottom, float, 0.0f );
+	ADD_VAR( model_pulsator, bool, false );
+	ADD_VAR( model_pulsator_delay, float, 200.0f );
+	ADD_VAR( model_inverse_pulastor, bool, false );
 
 	ADD_VAR( menu_pos_x, float, 10.0f );
 	ADD_VAR( menu_pos_y, float, 10.0f );

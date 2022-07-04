@@ -31,7 +31,7 @@ const char* speedhack_modes[ 6 ] = { "fast", "super fast", "slow", "super slow",
 const char* antiafk_modes[ 7 ] = { "side", "forward", "both", "wasd", "roaming", "kill", "gibme" };
 const char* antiaim_yaw_modes[ 13 ] = { "none", "zero", "backwards", "sideways", "back jitter", "slowspin", "fastspin", "goldenspin", "random", "fake left", "fake right", "switch", "lisp" };
 const char* antiaim_pitch_modes[ 10 ] = { "none", "zero", "emotion", "up", "down", "up2", "fakedown", "fakeup", "varie", "lisp" };
-const char* fakelag_modes[ 2 ] = { "on key", "on velocity" };
+const char* fakelag_modes[ 3 ] = { "on key", "on velocity", "in air" };
 const char* box_types[ 3 ] = { "min/max z", "static", "dynamic" };
 const char* airstuck_modes[ 5 ] = { "freeze", "packet", "time", "freeze & time", "process" };
 const char* vote_modes[ 2 ] = { "no", "yes" };
@@ -183,7 +183,7 @@ void RenderMovement( Mui::c_window* window ) {
         if ( cfg::get< bool >( vars.fakelag ) ) {
             groupbox->add( std::make_unique< Mui::c_combobox >( "fakelag modes##fakelag", &cfg::get< int >( vars.fakelag_mode ), fakelag_modes, MUI_SIZE( fakelag_modes ) ) );
        //
-            if ( cfg::get< int >( vars.fakelag_mode ) == 0 ) {
+            if ( cfg::get< int >( vars.fakelag_mode ) == options::fakelag_key ) {
                 groupbox->add( std::make_unique< Mui::c_label_hotkey >( "key", &cfg::get< int >( vars.fakelag_key ) ) );
                 groupbox->add( std::make_unique< Mui::c_slider_int >( "factor", &cfg::get< int >( vars.fakelag_factor ), 1, 200, "ts" ) );
                 groupbox->add( std::make_unique< Mui::c_checkbox >( "toggle", &cfg::get< bool >( vars.fakelag_toggle ) ) );
@@ -349,8 +349,11 @@ void PlayerFromList( Mui::c_groupbox* grp ) {
     grp->add( std::make_unique< Mui::c_button >( "steal skin", &m_player_skins[ m_iplayerindex ] ) );
     grp->add( std::make_unique< Mui::c_checkbox >( "glue to player", &options::player_glue[ m_iplayerindex ] ) );
     grp->add( std::make_unique< Mui::c_checkbox >( "player important", &options::player_important[ m_iplayerindex ] ) );
-    if ( options::player_important[ m_iplayerindex ] )
+
+    if ( options::player_important[ m_iplayerindex ] ) {
         grp->add( std::make_unique< Mui::c_color_picker >( "player important hue", &options::player_important_hue[ m_iplayerindex ] ) );
+        grp->add( std::make_unique< Mui::c_checkbox >( "glow player", &options::player_glow[ m_iplayerindex ] ) );
+    };
 
     if ( m_player_skins[ m_iplayerindex ] ) {
         xti::g_engine->pfnCvar_Set( "model", player_info->model );
@@ -478,6 +481,11 @@ void RenderOther( Mui::c_window* window ) {
         groupbox->add( std::make_unique< Mui::c_color_picker >( "model color [top]", &cfg::get< float >( vars.model_color_top ) ) );
         groupbox->add( std::make_unique< Mui::c_color_picker >( "model color [bottom]", &cfg::get< float >( vars.model_color_bottom ) ) );
         groupbox->add( std::make_unique< Mui::c_button >( "update model color", &set_changed_model ) );
+        groupbox->add( std::make_unique< Mui::c_checkbox >( "model pulsator", &cfg::get< bool >( vars.model_pulsator ) ) );
+        if ( cfg::get< bool >( vars.model_pulsator ) ) {
+            groupbox->add( std::make_unique< Mui::c_slider_float >( "pulsator delay", &cfg::get< float >( vars.model_pulsator_delay ), 1.0f, 1500.0f, "ms" ) );
+            groupbox->add( std::make_unique< Mui::c_checkbox >( "inverse bottom pulsator", &cfg::get< bool >( vars.model_inverse_pulastor ) ) );
+        };
 
         if ( set_changed_model ) {
             Renderer::PushNotification( "Model", " color ", "has been updated." );
@@ -496,17 +504,6 @@ void Mui::RenderOldMenu( ) {
     if ( options::show_menu ) {
         float posx = cfg::get< float >( vars.menu_pos_x );
         float posy = cfg::get< float >( vars.menu_pos_y );
-        if ( io.MousePos.x > posx && io.MousePos.y > posy && io.MousePos.x < posx + 50.0f && io.MousePos.y < posy + 20.0f )
-            if ( io.MouseDown[ 0 ] )
-                is_holding_menu = true;
-
-        if ( !io.MouseDown[ 0 ] && is_holding_menu )
-            is_holding_menu = false;
-
-        if ( is_holding_menu ) {
-            cfg::get< float >( vars.menu_pos_x ) = io.MousePos.x;
-            cfg::get< float >( vars.menu_pos_y ) = io.MousePos.y;
-        }
 
         auto window = std::make_unique< Mui::c_window >( "hack", Mui::vec2_t( posx, posy ), _CORE_BUILD_DATE );
         window->begin( );
@@ -533,7 +530,18 @@ void Mui::RenderOldMenu( ) {
             break;
         };
         window->end( );
-    }
+        if ( io.MousePos.x > posx && io.MousePos.y > posy && io.MousePos.x < posx + 50.0f && io.MousePos.y < posy + 20.0f )
+            if ( io.MouseDown[ 0 ] )
+                is_holding_menu = true;
+
+        if ( !io.MouseDown[ 0 ] && is_holding_menu )
+            is_holding_menu = false;
+
+        if ( is_holding_menu ) {
+            cfg::get< float >( vars.menu_pos_x ) = io.MousePos.x;
+            cfg::get< float >( vars.menu_pos_y ) = io.MousePos.y;
+        }
+    };
 };
 
 void Mui::RenderNewMenu( ) { 

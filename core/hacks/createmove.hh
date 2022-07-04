@@ -260,21 +260,44 @@ namespace createmove {
 		if ( xtu::is_player_dead( ) )
 			return;
 
-		if ( Mui::is_key_down( cfg::get< int >( vars.fakelag_key ) ) || ( cfg::get< bool >( vars.fakelag_toggle ) && Mui::is_key_toggle( cfg::get< int >( vars.fakelag_key ) ) ) ) {
-			if ( m_fakelag2 < cfg::get< int >( vars.fakelag_factor ) ) { // När du använder detta med super fast speed och kör medkit så blir det instant revive.
-				xtu::send_packet = false;
-				m_fakelag2++;
+		switch ( cfg::get< int >( vars.fakelag_mode ) ) {
+		case options::fakelag_key: {
+				if ( Mui::is_key_down( cfg::get< int >( vars.fakelag_key ) ) || ( cfg::get< bool >( vars.fakelag_toggle ) && Mui::is_key_toggle( cfg::get< int >( vars.fakelag_key ) ) ) ) {
+					if ( m_fakelag2 < cfg::get< int >( vars.fakelag_factor ) ) { // När du använder detta med super fast speed och kör medkit så blir det instant revive.
+						xtu::send_packet = false;
+						m_fakelag2++;
+					}
+					else {
+						xtu::send_packet = true;
+						m_fakelag2 = 0;
+					};
+				}
+				else {
+					xtu::send_packet = true;
+					m_fakelag2 = 0;
+				};
+			}break;
+
+		case options::fakelag_air: {
+			if ( !( xti::g_playermove->flags & FL_ONGROUND ) ) {
+				if ( m_fakelag2 < 40 ) {
+					xtu::send_packet = false;
+					m_fakelag2++;
+				}
+				else {
+					xtu::send_packet = true;
+					m_fakelag2 = 0;
+				}
 			}
 			else {
 				xtu::send_packet = true;
 				m_fakelag2 = 0;
 			};
-		}
-		else {
-			xtu::send_packet = true;
-			m_fakelag2 = 0;
-		}
-	}
+		}break;
+		default:
+			break;
+		};
+	};
 
 	void on_cmd_adjust_speed_start( sdk::c_user_cmd* m_cmd ) {
 		if ( !xti::g_playermove )
@@ -852,6 +875,9 @@ namespace createmove {
 			if ( xtu::dormant( entity, local ) )
 				continue;
 
+			if ( xtu::get_entity_health( i ) < 1.0f )
+				continue;
+
 			auto studiohdr = xti::g_studiomodel->Mod_Extradata( entity->model );
 			if ( !studiohdr || studiohdr->numhitboxes == 0 )
 				continue;
@@ -905,6 +931,9 @@ namespace createmove {
 		if ( xtu::dormant( best_entity, local ) )
 			return;
 
+		if ( xtu::get_entity_health( best_entity->index ) < 1.0f )
+			return;
+
 		if ( cfg::get< bool >( vars.follow_steal_skin ) ) {
 			auto player_info = xti::g_studiomodel->PlayerInfo( best_entity->index - 1 );
 			if ( !player_info || !player_info->name || std::strlen( player_info->name ) < 1 )
@@ -947,6 +976,28 @@ namespace createmove {
 						m_cmd->buttons &= ~sdk::in_duck;
 				};
 			};
+		};
+	};
+
+	void on_cmd_color_pulsator( ) {
+		if ( !cfg::get< bool >( vars.model_pulsator ) )
+			return;
+
+		if ( !xti::g_playermove )
+			return;
+
+		static int m_iPulsator = 0;
+		if ( m_iPulsator > 255 )
+			m_iPulsator = 0;
+
+		static float m_flNextTick = 0.0f;
+
+		if ( static_cast< float >( GetTickCount64( ) ) > m_flNextTick ) {
+			m_flNextTick = static_cast< float >( GetTickCount64( ) ) + cfg::get< float >( vars.model_pulsator_delay );
+
+			xti::g_engine->pfnCvar_Set( "topcolor", std::format( "{}", m_iPulsator ).data( ) );
+			xti::g_engine->pfnCvar_Set( "bottomcolor", std::format( "{}", cfg::get< bool >( vars.model_inverse_pulastor ) ? 255 - m_iPulsator : m_iPulsator ).data( ) );
+			m_iPulsator++;
 		};
 	};
 

@@ -343,3 +343,11 @@ bool xtu::is_player_dead_non_observer( )
 {
 	return xti::g_playermove->dead;
 };
+
+float xtu::get_entity_health( int index ) {
+	return *reinterpret_cast< float* >( ( std::uintptr_t )xti::g_playerextrainfo + sizeof( sdk::extra_player_info_t ) * index + 0x42 );
+};
+
+std::uintptr_t* xtu::get_entity_player_info( int index ) {
+	return reinterpret_cast< std::uintptr_t* >( ( std::uintptr_t )xti::g_playerextrainfo + sizeof( sdk::extra_player_info_t ) * index );
+};

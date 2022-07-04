@@ -32,6 +32,18 @@ namespace sdk {
 		int			firstface, numfaces;
 	} dmodel_t;
 
+	struct extra_player_info_t {
+		short frags;
+		short deaths;
+		short playerclass;
+		short health; // UNUSED currently, spectator UI would like this
+		bool dead;	  // UNUSED currently, spectator UI would like this
+		short teamnumber;
+		char teamname[ 16 ];
+
+		char pad[ 0x3c ];
+	};
+
 	typedef enum
 	{
 		mod_brush,

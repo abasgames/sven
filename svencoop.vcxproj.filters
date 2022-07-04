@@ -126,6 +126,9 @@
     <ClCompile Include="core\hooks\game\color.cc">
       <Filter>core\hooks\game</Filter>
     </ClCompile>
+    <ClCompile Include="core\hooks\game\studiomodel.cc">
+      <Filter>core\hooks\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\utils\utils.hh">

@@ -72,6 +72,10 @@ namespace xtu {
 
 	bool is_overlay_opened( );
 
+	float get_entity_health( int index );
+
+	std::uintptr_t* get_entity_player_info( int index );
+
 	// this is so fucking ugly, but this is the only solution i could find.
 // Basically, the animtime stops if the entity is dead or has frozen,
 // GetClientTime ticks at the same speed as animtime, but considering that clienttime is always ticking, we

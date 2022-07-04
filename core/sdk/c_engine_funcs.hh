@@ -54,17 +54,6 @@ namespace sdk {
 		const char* pMessage;
 	} client_textmessage_t;
 
-	struct extra_player_info_t
-	{
-		short frags;
-		short deaths;
-		short playerclass;
-		short health; // UNUSED currently, spectator UI would like this
-		bool dead; // UNUSED currently, spectator UI would like this
-		short teamnumber;
-		char teamname[ 16 ];
-	};
-
 	typedef struct con_nprint_s
 	{
 		int		index;			// Row #

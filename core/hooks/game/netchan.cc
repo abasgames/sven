@@ -54,7 +54,7 @@ bool FreezeOnAlive( sdk::netchan_t* netchan, int length, byte* data ) {
 	if ( b_in_motion ) {
 		b_in_motion = false;
 		return false;
-	}
+	};
 
 	if ( !b_in_motion ) {
 		switch ( cfg::get< int >( vars.airstuck_mode ) ) {

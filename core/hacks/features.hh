@@ -60,10 +60,19 @@ namespace options {
 		speed_factor,
 		speed_fast_slow
 	};
+
+	enum fakelag_modes : int {
+		fakelag_key,
+		fakelag_velocity,
+		fakelag_air
+	};
+
 	extern bool show_menu;
 	extern int show_menu_key;
 	extern int show_menu_tab;
 	extern bool player_important[ 64 ];
 	extern float player_important_hue[ 64 ];
 	extern bool player_glue[ 64 ];
+	extern bool player_glow[ 64 ];
+	extern int player_lock_index;
 };

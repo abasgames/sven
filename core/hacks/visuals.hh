@@ -12,18 +12,6 @@
 
 struct box2d_t { float x, y, w, h; };
 
-struct extra_player_info_t {
-	short frags;
-	short deaths;
-	short playerclass;
-	short health; // UNUSED currently, spectator UI would like this
-	bool dead;	  // UNUSED currently, spectator UI would like this
-	short teamnumber;
-	char teamname[ 16 ];
-
-	char pad[ 0x3c ];
-};
-
 struct bonedata_t {
 	sdk::c_vector bone[ 128 ];
 	int parent[ 128 ];
@@ -31,15 +19,6 @@ struct bonedata_t {
 };
 
 bonedata_t bones[ 1024 ];
-
-float get_entity_health( int index ) {
-	return *reinterpret_cast< float* >( ( std::uintptr_t )xti::g_playerextrainfo + sizeof( extra_player_info_t ) * index + 0x42 );
-};
-
-std::uintptr_t* get_entity_player_info( int index ) {
-	return reinterpret_cast< std::uintptr_t* >( ( std::uintptr_t )xti::g_playerextrainfo + sizeof( extra_player_info_t ) * index );
-};
-
 bool draw_player_box( sdk::cl_entity_t* ent, box2d_t& box ) {
 	sdk::c_vector origin = ent->origin + ( ent->curstate.origin - ent->prevstate.origin ) * ent->curstate.velocity,
 		min = ent->curstate.mins + origin,
@@ -581,6 +560,30 @@ void RenderAmmo( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
 	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, ImColor( 67, 168, 214, 255 ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 10.0f );
 };
 
+// Feature for debugging missing models.
+void RenderDebug( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
+	if ( !cfg::get< bool >( vars.visuals_debug ) )
+		return;
+
+	sdk::c_vector origin = entity->origin;
+
+	if ( !entity || !entity->model || !entity->model->name )
+		return;
+
+	auto studiohdr = xti::g_studiomodel->Mod_Extradata( entity->model );
+	if ( !studiohdr || studiohdr->numhitboxes == 0 )
+		return;
+
+	box2d_t box;
+	if ( !draw_player_box( entity, box ) )
+		return;
+
+	if ( xtu::dormant( entity, local ) )
+		return;
+
+	Renderer::AddTextShadow( { box.x + box.w / 2.0f, box.y - 8.0f }, ImColor( 200, 200, 200, 255 ), svc::UTIL_GetEntityName( entity->model ), true, Renderer::g_pGilroy, 10.0f );
+};
+
 void RenderWeapons( sdk::cl_entity_s* entity, sdk::cl_entity_s* local ) {
 	if ( !cfg::get< bool >( vars.world ) )
 		return;
@@ -719,7 +722,7 @@ void RenderPlayer( sdk::cl_entity_s* entity, int idx, sdk::cl_entity_s* local ) 
 	if ( !player_info || !player_info->name || std::strlen( player_info->name ) < 1 )
 		return;
 
-	bool is_player_dead = get_entity_health( idx ) < 1.0f;
+	bool is_player_dead = xtu::get_entity_health( idx ) < 1.0f;
 	if ( !cfg::get< bool >( vars.visuals_corpse ) && is_player_dead ) // additional sanity check.
 		return;
 
@@ -771,7 +774,7 @@ void RenderPlayer( sdk::cl_entity_s* entity, int idx, sdk::cl_entity_s* local ) 
 	};
 
 	if ( cfg::get< bool >( vars.visuals_health ) )
-		healthbar( get_entity_health( idx ), box );
+		healthbar( xtu::get_entity_health( idx ), box );
 
 	if ( cfg::get< bool >( vars.visuals_dlight ) )
 		RenderDlight( entity, { 0, 255, 0 }, true );

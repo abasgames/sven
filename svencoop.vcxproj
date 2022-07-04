@@ -148,6 +148,7 @@
     <ClCompile Include="core\hooks\game\hud.cc" />
     <ClCompile Include="core\hooks\game\netchan.cc" />
     <ClCompile Include="core\hooks\game\scr.cc" />
+    <ClCompile Include="core\hooks\game\studiomodel.cc" />
     <ClCompile Include="core\hooks\game\swapbuffers.cc" />
     <ClCompile Include="core\hooks\game\votemenu.cc" />
     <ClCompile Include="core\hooks\hooks.cc" />

@@ -57,17 +57,14 @@ namespace xth {
 	using fn_chat_color = void* ( * )( int );
 	void* hk_chat_color( int );
 
-	using fn_server_votemanager_startvote = void( __thiscall* )( void* ecx, void* str, int unk );
-	void __fastcall hk_server_votemanager_playervoted( void* ecx, void* edx, void* str, int unk );
-
-	using fn_server_votemanager_endvote = int( __thiscall* )( void* ecx );
-	int __fastcall hk_server_votemanager_endvote( void* ecx, void* edx );
-
 	using fn_set_fov = int( * )( const char* sz_message, int size, void* buffer );
 	int hk_set_fov( const char* sz_message, int size, void* buffer );
 
 	using fn_say_text = int( * )( const char* sz_message, int size, void* buffer );
 	int hk_say_text( const char* sz_message, int size, void* buffer );
+
+	using fn_studio_model_render = void( __thiscall* )( void* ecx );
+	void __fastcall hk_studio_model_render( void* ecx, void* edx );
 
 	void setup_hooks( );
 	void disable_hooks( );
@@ -103,17 +100,17 @@ namespace xth {
 
 	namespace votemenu {
 		void hook( );
-
-		void rehook( );
-		void unhook( );
-		void serverhook( );
-	}
+	};
 
 	namespace scr {
 		void hook( );
 	}
 
 	namespace color {
+		void hook( );
+	};
+
+	namespace studiorender {
 		void hook( );
 	};
 

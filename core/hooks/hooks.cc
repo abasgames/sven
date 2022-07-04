@@ -22,6 +22,7 @@ void xth::setup_hooks( ) {
 	xth::swapbuffers::glhooks( );
 	xth::hud::hudhooks( );
 	xth::scr::hook( );
+	xth::studiorender::hook( );
 	xth::enable( );
 };
 

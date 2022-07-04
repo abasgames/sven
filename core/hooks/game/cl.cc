@@ -46,6 +46,49 @@ void ThirdPerson( sdk::ref_params_s* pparams ) {
 	};
 };
 
+void SpyCam( sdk::ref_params_s* pparams ) {
+
+};
+
+void FaceMe( sdk::ref_params_s* pparams ) {
+	auto local = xti::g_engine->GetLocalPlayer( );
+	if ( !local )
+		return;
+
+	if ( !xti::g_playermove )
+		return;
+	for ( auto it = 0; it < xti::g_engine->GetMaxClients( ); it++ ) {
+		auto entity = xti::g_engine->GetEntityByIndex( it );
+		if ( !entity )
+			continue;
+
+		if ( !entity->player )
+			continue;
+
+		if ( !entity->model )
+			continue;
+
+		if ( !entity->model->name || !std::strstr( entity->model->name, ".mdl" ) )
+			continue;
+
+		if ( entity == local )
+			continue;
+
+		if ( xtu::dormant( entity, local ) )
+			continue;
+
+		if ( xtu::get_entity_health( it ) < 1.0f )
+			continue;
+
+		auto studiohdr = xti::g_studiomodel->Mod_Extradata( entity->model );
+		if ( !studiohdr || studiohdr->numhitboxes == 0 )
+			continue;
+
+		auto vec = createmove::calc_angle( entity->curstate.angles, local->curstate.angles );
+		entity->curstate.angles = vec;
+	};
+};
+
 void MirrorCam( sdk::ref_params_s* pparams ) {
 	if ( !cfg::get< bool >( vars.mirror ) )
 		return;
@@ -102,14 +145,13 @@ void xth::hk_create_move( float frametime, sdk::c_user_cmd* m_cmd, int active ) 
 				xtu::send_packet = true;
 				m_fakelag = 0;
 			};
-			*xti::g_gamespeed = ( cfg::get< float >( vars.rev_expl_factor2 ) * 250 ) * 1000.0;
+			*xti::g_gamespeed = cfg::get< float >( vars.rev_expl_factor2 ) * 1000.0;
 			m_cmd->forwardmove = 0.0f;
 			m_cmd->sidemove = 0.0f;
 		}
 		else m_fakelag = 0;
 
 		createmove::on_cmd_dupeglitch( m_cmd );
-
 		createmove::on_cmd_slowwalk( m_cmd );
 		createmove::on_cmd_movement( m_cmd, m_stored_angles );
 		createmove::on_cmd_telehop( m_cmd, m_stored_angles );
@@ -146,6 +188,7 @@ void xth::hk_create_move( float frametime, sdk::c_user_cmd* m_cmd, int active ) 
 		createmove::on_cmd_airrun( m_cmd );
 		createmove::on_cmd_chatspam( m_cmd );
 		createmove::on_cmd_fastrun( m_cmd );
+		createmove::on_cmd_color_pulsator( );
 
 		if ( cfg::get< bool >( vars.corpse ) && xti::g_playermove->dead ) {
 			sdk::c_vector angles;
@@ -175,7 +218,6 @@ void xth::hk_create_move( float frametime, sdk::c_user_cmd* m_cmd, int active ) 
 			}break;
 			};
 		};
-
 	};
 };
 
